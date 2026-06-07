@@ -33,12 +33,12 @@
 
 <table>
   <tr>
-    <td align="center"><img src="assets/ss1.png" width="300" alt="Landing Screen"/><br/><b>Onboarding</b></td>
-    <td align="center"><img src="assets/ss2.png" width="300" alt="Home Screen"/><br/><b>Contest Calendar</b></td>
+    <td align="center"><img src="assets/ss1.jpeg" width="300" alt="Landing Screen"/><br/><b>Onboarding</b></td>
+    <td align="center"><img src="assets/ss2.jpeg" width="300" alt="Home Screen"/><br/><b>Contest Calendar</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="assets/ss3.png" width="300" alt="Alarm Screen"/><br/><b>Full-Screen Alarm</b></td>
-    <td align="center"><img src="assets/ss4.png" width="300" alt="Settings Screen"/><br/><b>Settings</b></td>
+    <td align="center"><img src="assets/ss3.jpeg" width="300" alt="Alarm Screen"/><br/><b>Full-Screen Alarm</b></td>
+    <td align="center"><img src="assets/ss4.jpeg" width="300" alt="Settings Screen"/><br/><b>Settings</b></td>
   </tr>
 </table>
 
