@@ -255,9 +255,3 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 <p align="center">
   <strong>Built with 💚 for competitive programmers who oversleep.</strong>
 </p>
-
-<p align="center">
-  <a href="https://github.com/sambhandavale/CodeBuzzer/stargazers">
-    <img src="https://img.shields.io/github/stars/sambhandavale/CodeBuzzer?style=social" alt="Stars"/>
-  </a>
-</p>
