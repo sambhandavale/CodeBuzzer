@@ -13,14 +13,12 @@
 
 <p align="center">
   <a href="#features"><img src="https://img.shields.io/badge/Platforms-4-1CD065?style=for-the-badge&logo=codeforces&logoColor=white" alt="Platforms"/></a>
-  <a href="https://github.com/sambhandavale/CodeBuzzer/releases/latest/download/cb_v1.0.0.apk
-"><img src="https://img.shields.io/badge/Download-APK-1CD065?style=for-the-badge&logo=android&logoColor=white" alt="Download APK"/></a>
   <a href="#tech-stack"><img src="https://img.shields.io/badge/Built_with-Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter"/></a>
   <a href="https://github.com/sambhandavale/CodeBuzzer/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License"/></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/sambhandavale/CodeBuzzer/releases/latest/download/codebuzzer_v.apk">
+  <a href="https://github.com/sambhandavale/CodeBuzzer/releases/latest/download/cb_v1.0.0.apk">
     <img src="https://img.shields.io/badge/⬇_DOWNLOAD_LATEST_APK-1CD065?style=for-the-badge&logoColor=white&labelColor=111214&color=1CD065" alt="Download" height="50"/>
   </a>
 </p>
