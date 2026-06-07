@@ -142,65 +142,31 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
                 ),
               ),
               const Spacer(),
-              // Actions (WhatsApp style)
+              // Actions (Swipe to action)
               Padding(
-                padding: const EdgeInsets.only(bottom: 60, left: 40, right: 40),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Stop / Decline Action
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _buildCallButton(
-                          icon: Icons.close,
-                          color: Colors.redAccent,
-                          onTap: () async {
-                            if (contest != null) {
-                              await provider.dismissAlarm(contest);
-                            } else {
-                              await Alarm.stop(widget.alarmSettings.id);
-                            }
-                            if (mounted) Navigator.pop(context);
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        const Text(
-                          'Dismiss',
-                          style: TextStyle(color: Colors.white70, fontSize: 13),
-                        ),
-                      ],
-                    ),
-                    // Snooze / Accept Action
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _buildCallButton(
-                          icon: Icons.snooze,
-                          color: Colors.amber,
-                          onTap: () async {
-                            if (contest != null) {
-                              await provider.snoozeAlarm(contest);
-                            } else {
-                              final now = DateTime.now();
-                              final snoozeTime =
-                                  now.add(const Duration(minutes: 5));
-                              final newSettings =
-                                  widget.alarmSettings.copyWith(dateTime: snoozeTime);
-                              await Alarm.stop(widget.alarmSettings.id);
-                              await Alarm.set(alarmSettings: newSettings);
-                            }
-                            if (mounted) Navigator.pop(context);
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        const Text(
-                          'Snooze (5m)',
-                          style: TextStyle(color: Colors.white70, fontSize: 13),
-                        ),
-                      ],
-                    ),
-                  ],
+                padding: const EdgeInsets.only(bottom: 60),
+                child: SwipeActionSlider(
+                  onDismiss: () async {
+                    if (contest != null) {
+                      await provider.dismissAlarm(contest);
+                    } else {
+                      await Alarm.stop(widget.alarmSettings.id);
+                    }
+                    if (mounted) Navigator.pop(context);
+                  },
+                  onSnooze: () async {
+                    if (contest != null) {
+                      await provider.snoozeAlarm(contest);
+                    } else {
+                      final now = DateTime.now();
+                      final snoozeTime = now.add(const Duration(minutes: 5));
+                      final newSettings =
+                          widget.alarmSettings.copyWith(dateTime: snoozeTime);
+                      await Alarm.stop(widget.alarmSettings.id);
+                      await Alarm.set(alarmSettings: newSettings);
+                    }
+                    if (mounted) Navigator.pop(context);
+                  },
                 ),
               ),
             ],
@@ -209,29 +175,114 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
       ),
     );
   }
+}
 
-  Widget _buildCallButton({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 75,
-        height: 75,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: 15,
-              spreadRadius: 2,
+class SwipeActionSlider extends StatefulWidget {
+  final VoidCallback onDismiss;
+  final VoidCallback onSnooze;
+
+  const SwipeActionSlider({
+    super.key,
+    required this.onDismiss,
+    required this.onSnooze,
+  });
+
+  @override
+  State<SwipeActionSlider> createState() => _SwipeActionSliderState();
+}
+
+class _SwipeActionSliderState extends State<SwipeActionSlider> {
+  double _dragPosition = 0.0;
+  final double _maxDrag = 110.0;
+
+  void _onHorizontalDragUpdate(DragUpdateDetails details) {
+    setState(() {
+      _dragPosition += details.delta.dx;
+      if (_dragPosition > _maxDrag) _dragPosition = _maxDrag;
+      if (_dragPosition < -_maxDrag) _dragPosition = -_maxDrag;
+    });
+  }
+
+  void _onHorizontalDragEnd(DragEndDetails details) {
+    if (_dragPosition > _maxDrag * 0.8) {
+      widget.onSnooze();
+    } else if (_dragPosition < -_maxDrag * 0.8) {
+      widget.onDismiss();
+    } else {
+      setState(() {
+        _dragPosition = 0.0;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 300,
+      height: 80,
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(40),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: widget.onDismiss,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.close, color: Colors.redAccent.withOpacity(0.7), size: 24),
+                      Text('Dismiss', style: TextStyle(color: Colors.redAccent.withOpacity(0.7), fontSize: 10, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: widget.onSnooze,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.snooze, color: Colors.amber.withOpacity(0.7), size: 24),
+                      Text('Snooze', style: TextStyle(color: Colors.amber.withOpacity(0.7), fontSize: 10, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Transform.translate(
+            offset: Offset(_dragPosition, 0),
+            child: GestureDetector(
+              onHorizontalDragUpdate: _onHorizontalDragUpdate,
+              onHorizontalDragEnd: _onHorizontalDragEnd,
+              child: Container(
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1CD065),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF1CD065).withOpacity(0.4),
+                      blurRadius: 15,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.alarm, color: Colors.black87, size: 30),
+              ),
             ),
-          ],
-        ),
-        child: Icon(icon, color: Colors.white, size: 35),
+          ),
+        ],
       ),
     );
   }

@@ -229,9 +229,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         )
                       : contestProvider.error.isNotEmpty
                       ? Center(
-                          child: Text(
-                            contestProvider.error,
-                            style: const TextStyle(color: Colors.redAccent),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                contestProvider.error,
+                                style: const TextStyle(color: Colors.redAccent),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 16),
+                              ElevatedButton.icon(
+                                onPressed: () => contestProvider.fetchContests(force: true),
+                                icon: const Icon(Icons.refresh, size: 18),
+                                label: const Text('Retry'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF1CD065).withOpacity(0.2),
+                                  foregroundColor: const Color(0xFF1CD065),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         )
                       : RefreshIndicator(
@@ -240,22 +260,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           onRefresh: () =>
                               contestProvider.fetchContests(force: true),
                           child: contestProvider.filteredContests.isEmpty
-                              ? Center(
-                                  child: ListView(
-                                    shrinkWrap: true,
-                                    children: [
-                                      Center(
-                                        child: Text(
-                                          'No contests on this date',
-                                          style: TextStyle(
-                                            color: Colors.white54,
-                                          ),
+                              ? ListView(
+                                  physics: const AlwaysScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.only(top: 100),
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        'No contests on this date',
+                                        style: TextStyle(
+                                          color: Colors.white54,
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 )
                               : ListView.builder(
+                                  physics: const AlwaysScrollableScrollPhysics(),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 24,
                                   ),

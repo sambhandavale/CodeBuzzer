@@ -58,48 +58,56 @@ class AlarmService {
   }
 
   static Future<void> scheduleContestAlarm(Contest contest) async {
-    DateTime notifTime = contest.startTime.subtract(
-      const Duration(minutes: 10),
-    );
-    DateTime ringTime = contest.startTime.subtract(const Duration(minutes: 5));
+    DateTime notif30 = contest.startTime.subtract(const Duration(minutes: 30));
+    DateTime notif10 = contest.startTime.subtract(const Duration(minutes: 10));
+    DateTime ring5 = contest.startTime.subtract(const Duration(minutes: 5));
+    DateTime exactTime = contest.startTime;
 
     int alarmId = contest.alarmId;
-    int notifId = alarmId + 1;
 
-    try {
-      if (notifTime.isAfter(DateTime.now())) {
-        await flutterLocalNotificationsPlugin.zonedSchedule(
-          id: notifId,
-          title: 'Contest in 10 minutes!',
-          body: '${contest.name} on ${contest.site}',
-          scheduledDate: tz.TZDateTime.from(notifTime, tz.local),
-          // Inside scheduleContestAlarm, update notificationDetails:
-          notificationDetails: const NotificationDetails(
-            android: AndroidNotificationDetails(
-              'contest_reminder_ch',
-              'Contest Reminders',
-              channelDescription: 'Reminders for upcoming contests',
-              importance: Importance.max,
-              priority: Priority.max,
-              largeIcon: DrawableResourceAndroidBitmap('ic_notification'),
-              color: Color(0xFF1CD065),
-              ledColor: Color(0xFF1CD065),
-              ledOnMs: 1000,
-              ledOffMs: 500,
-              category: AndroidNotificationCategory.alarm,
-              audioAttributesUsage: AudioAttributesUsage.alarm,
+    Future<void> scheduleNotif(
+      DateTime time,
+      int idOffset,
+      String title,
+    ) async {
+      try {
+        if (time.isAfter(DateTime.now())) {
+          await flutterLocalNotificationsPlugin.zonedSchedule(
+            id: alarmId + idOffset,
+            title: title,
+            body: '${contest.name} on ${contest.site}',
+            scheduledDate: tz.TZDateTime.from(time, tz.local),
+            notificationDetails: const NotificationDetails(
+              android: AndroidNotificationDetails(
+                'contest_reminder_ch',
+                'Contest Reminders',
+                channelDescription: 'Reminders for upcoming contests',
+                importance: Importance.max,
+                priority: Priority.max,
+                largeIcon: DrawableResourceAndroidBitmap('ic_notification'),
+                color: Color(0xFF1CD065),
+                ledColor: Color(0xFF1CD065),
+                ledOnMs: 1000,
+                ledOffMs: 500,
+                category: AndroidNotificationCategory.alarm,
+                audioAttributesUsage: AudioAttributesUsage.alarm,
+              ),
             ),
-          ),
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        );
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          );
+        }
+      } catch (e) {
+        // ignore
       }
-    } catch (e) {
-      // ignore
     }
 
+    await scheduleNotif(notif30, 1, 'Contest in 30 minutes!');
+    await scheduleNotif(notif10, 2, 'Contest in 10 minutes!');
+    await scheduleNotif(exactTime, 3, 'Contest is starting now!');
+
     try {
-      if (ringTime.isAfter(DateTime.now())) {
-        await _setAlarm(alarmId, ringTime, contest.name);
+      if (ring5.isAfter(DateTime.now())) {
+        await _setAlarm(alarmId, ring5, contest.name);
       }
     } catch (e) {
       // ignore
@@ -156,5 +164,8 @@ class AlarmService {
 
   static Future<void> stopAlarm(int id) async {
     await Alarm.stop(id);
+    await flutterLocalNotificationsPlugin.cancel(id: id + 1);
+    await flutterLocalNotificationsPlugin.cancel(id: id + 2);
+    await flutterLocalNotificationsPlugin.cancel(id: id + 3);
   }
 }

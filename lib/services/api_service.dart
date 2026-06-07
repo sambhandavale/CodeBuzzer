@@ -19,13 +19,8 @@ class ApiService {
       print('CF Error: $e');
     }
 
-    // 2. Fetch from Leetcode GraphQL
-    try {
-      final lcContests = await _fetchLeetCode();
-      allContests.addAll(lcContests);
-    } catch (e) {
-      print('LC Error: $e');
-    }
+    // 2. Manual LeetCode Generation (Hardcoded as requested)
+    allContests.addAll(_generateManualLeetCodeContests());
 
     // 3. Manual CodeChef Generation
     allContests.addAll(_generateManualCodeChefContests());
@@ -210,6 +205,56 @@ class ApiService {
       return contests;
     }
     throw Exception('LC Failed');
+  }
+
+  static List<Contest> _generateManualLeetCodeContests() {
+    List<Contest> contests = [];
+    DateTime now = DateTime.now();
+    // Anchor for Biweekly: June 6, 2026 at 8:00 PM
+    DateTime biweeklyAnchor = DateTime(2026, 6, 6, 20, 0);
+    
+    for (int i = 0; i < 30; i++) {
+      DateTime day = now.add(Duration(days: i));
+      
+      // Weekly Contest (Every Sunday 8:00 AM)
+      if (day.weekday == DateTime.sunday) {
+        DateTime contestStart = DateTime(day.year, day.month, day.day, 8, 0);
+        if (contestStart.isAfter(now)) {
+          contests.add(Contest(
+            id: 'lc_weekly_${day.year}_${day.month}_${day.day}',
+            name: "LeetCode Weekly Contest",
+            url: "https://leetcode.com/contest/",
+            startTime: contestStart,
+            endTime: contestStart.add(const Duration(minutes: 90)),
+            duration: "5400",
+            site: "LeetCode",
+            status: "BEFORE",
+          ));
+        }
+      }
+
+      // Biweekly Contest (Every other Saturday 8:00 PM)
+      if (day.weekday == DateTime.saturday) {
+        DateTime contestStart = DateTime(day.year, day.month, day.day, 20, 0);
+        int daysDifference = contestStart.difference(biweeklyAnchor).inDays;
+        
+        if (daysDifference % 14 == 0) {
+          if (contestStart.isAfter(now)) {
+            contests.add(Contest(
+              id: 'lc_biweekly_${day.year}_${day.month}_${day.day}',
+              name: "LeetCode Biweekly Contest",
+              url: "https://leetcode.com/contest/",
+              startTime: contestStart,
+              endTime: contestStart.add(const Duration(minutes: 90)),
+              duration: "5400",
+              site: "LeetCode",
+              status: "BEFORE",
+            ));
+          }
+        }
+      }
+    }
+    return contests;
   }
 
   static List<Contest> _generateManualCodeChefContests() {
