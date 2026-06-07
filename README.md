@@ -29,6 +29,19 @@
   <img src="https://readme-typing-svg.demolab.com?font=Google+Sans&weight=600&size=22&pause=1000&color=1CD065&center=true&vCenter=true&width=500&lines=Supports+Codeforces%2C+LeetCode%2C+CodeChef;Background+sync+even+when+app+is+closed;Full-screen+alarm+that+actually+wakes+you;Beautiful+dark+glassmorphism+UI;100%25+free+and+open+source" alt="Typing SVG" />
 </p>
 
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="assets/ss1.png" width="300" alt="Landing Screen"/><br/><b>Onboarding</b></td>
+    <td align="center"><img src="assets/ss2.png" width="300" alt="Home Screen"/><br/><b>Contest Calendar</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/ss3.png" width="300" alt="Alarm Screen"/><br/><b>Full-Screen Alarm</b></td>
+    <td align="center"><img src="assets/ss4.png" width="300" alt="Settings Screen"/><br/><b>Settings</b></td>
+  </tr>
+</table>
+
 ---
 
 ## 💡 The Problem
