@@ -1,8 +1,10 @@
-<p align="center">
+<!-- <p align="center">
   <img src="assets/logo.png" width="120" alt="CodeBuzzer Logo"/>
 </p>
 
 <h1 align="center">CodeBuzzer</h1>
+ -->
+<img width="1653" height="422" alt="Frame 35378" src="https://github.com/user-attachments/assets/c25a7241-cc2a-4074-8721-33ad637cccaf" />
 
 <p align="center">
   <strong>Never miss a competitive programming contest again.</strong><br/>
