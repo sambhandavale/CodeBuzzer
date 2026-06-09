@@ -58,54 +58,6 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           _pages[_currentIndex],
 
-          if (!_permissionsGranted)
-            Positioned(
-              top: MediaQuery.of(context).padding.top + 10,
-              left: 20,
-              right: 20,
-              child: GestureDetector(
-                onTap: () async {
-                  await AlarmService.requestAllPermissions();
-                  _checkPermissions();
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.redAccent.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.warning_amber_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          'Permissions missing! Alarms may not work.',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.white,
-                        size: 12,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
           // Custom Floating Navbar
           Positioned(
             bottom: 50,

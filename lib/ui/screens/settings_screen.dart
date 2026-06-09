@@ -58,6 +58,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (_codechef) enabledSites.add('CodeChef');
     if (_atcoder) enabledSites.add('AtCoder');
     await prefs.setStringList('enabled_sites', enabledSites);
+
+    if (mounted) {
+      context.read<ContestProvider>().updateEnabledSitesAndAlarms(enabledSites);
+    }
   }
 
   Future<void> _pickAlarmSound() async {

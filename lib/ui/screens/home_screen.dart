@@ -15,13 +15,16 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late DateTime _focusedMonth;
   late ScrollController _calendarScrollController;
+  bool _permissionsGranted = true;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _checkPermissions();
     _focusedMonth = DateTime.now();
     _calendarScrollController = ScrollController();
 
@@ -38,8 +41,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _calendarScrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkPermissions();
+    }
+  }
+
+  Future<void> _checkPermissions() async {
+    final granted = await AlarmService.checkAllPermissions();
+    if (mounted) {
+      setState(() {
+        _permissionsGranted = granted;
+      });
+    }
   }
 
   Future<void> _editContest(BuildContext context, Contest contest) async {
@@ -144,6 +164,49 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (!_permissionsGranted)
+                  GestureDetector(
+                    onTap: () async {
+                      await AlarmService.requestAllPermissions();
+                      _checkPermissions();
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 24, right: 24, top: 16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(
+                            Icons.warning_amber_rounded,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Permissions missing! Tap to grant.',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.white,
+                            size: 12,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 _buildHeader(),
                 const SizedBox(height: 24),
                 _buildCalendar(contestProvider),
@@ -276,8 +339,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 )
                               : ListView.builder(
                                   physics: const AlwaysScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
+                                  padding: const EdgeInsets.only(
+                                    left: 24, right: 24, bottom: 120,
                                   ),
                                   itemCount:
                                       contestProvider.filteredContests.length,
@@ -629,20 +692,22 @@ class _HomeScreenState extends State<HomeScreen> {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            _buildChip('CodeForces', cfCount, provider),
-            if (lcCount > 0 || provider.enabledSites.contains('LeetCode')) ...[
+            if (provider.enabledSites.contains('CodeForces')) ...[
+              _buildChip('CodeForces', cfCount, provider),
               const SizedBox(width: 8),
+            ],
+            if (provider.enabledSites.contains('LeetCode')) ...[
               _buildChip('LeetCode', lcCount, provider),
-            ],
-            if (ccCount > 0 || provider.enabledSites.contains('CodeChef')) ...[
               const SizedBox(width: 8),
+            ],
+            if (provider.enabledSites.contains('CodeChef')) ...[
               _buildChip('CodeChef', ccCount, provider),
-            ],
-            if (atCount > 0 || provider.enabledSites.contains('AtCoder')) ...[
               const SizedBox(width: 8),
-              _buildChip('AtCoder', atCount, provider),
             ],
-            const SizedBox(width: 8),
+            if (provider.enabledSites.contains('AtCoder')) ...[
+              _buildChip('AtCoder', atCount, provider),
+              const SizedBox(width: 8),
+            ],
             _buildChip('Manual', manualCount, provider),
           ],
         ),

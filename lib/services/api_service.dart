@@ -265,8 +265,8 @@ class ApiService {
     for (int i = 0; i < 30; i++) {
       DateTime day = now.add(Duration(days: i));
       if (day.weekday == DateTime.wednesday) {
-        // Wednesday at 8:05 PM IST (20:05 IST = 14:35 UTC)
-        DateTime contestStart = DateTime(day.year, day.month, day.day, 20, 5);
+        // Wednesday at 8:00 PM IST (20:00 IST = 14:30 UTC)
+        DateTime contestStart = DateTime(day.year, day.month, day.day, 20, 0);
         
         if (contestStart.isAfter(now)) {
           contests.add(Contest(

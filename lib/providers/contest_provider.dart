@@ -191,4 +191,19 @@ class ContestProvider extends ChangeNotifier {
     await _scheduleAutomatedAlarms(_contests);
     notifyListeners();
   }
+
+  Future<void> updateEnabledSitesAndAlarms(List<String> newSites) async {
+    _enabledSites = newSites;
+    // cancel alarms for disabled sites and re-schedule for enabled
+    for (var contest in _contests) {
+      if (contest.site != 'Manual') {
+        if (!newSites.contains(contest.site)) {
+          await AlarmService.stopAlarm(contest.alarmId);
+        } else if (contest.isAlarmActive) {
+          await AlarmService.scheduleContestAlarm(contest);
+        }
+      }
+    }
+    notifyListeners();
+  }
 }
