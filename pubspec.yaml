@@ -30,6 +30,10 @@ dev_dependencies:
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^6.0.0
 
+dependency_overrides:
+  alarm:
+    path: packages/alarm
+
 flutter_launcher_icons:
   android: true
   ios: false

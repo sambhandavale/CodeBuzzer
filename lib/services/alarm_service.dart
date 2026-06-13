@@ -94,10 +94,12 @@ class AlarmService {
               ),
             ),
             androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
           );
         }
       } catch (e) {
-        // ignore
+        print('scheduleNotif error: $e');
       }
     }
 
@@ -131,11 +133,11 @@ class AlarmService {
   }) async {
     final prefs = await SharedPreferences.getInstance();
     String audioPath =
-        prefs.getString('custom_alarm_path') ?? 'assets/alarm.wav';
+        prefs.getString('custom_alarm_path') ?? 'assets/alarm_music.mp3';
 
     // If it's a file path (doesn't start with assets/), verify it exists
     if (!audioPath.startsWith('assets/') && !File(audioPath).existsSync()) {
-      audioPath = 'assets/alarm.wav';
+      audioPath = 'assets/alarm_music.mp3';
     }
 
     final alarmSettings = AlarmSettings(
