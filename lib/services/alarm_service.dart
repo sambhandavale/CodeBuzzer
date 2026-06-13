@@ -94,8 +94,6 @@ class AlarmService {
               ),
             ),
             androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
           );
         }
       } catch (e) {
