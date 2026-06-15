@@ -133,23 +133,28 @@ class LandingScreen extends StatelessWidget {
 
           // 3. Spacial Starfield of Logos
           const Positioned(
-            top: 150,
-            left: 60,
+            top: 80,
+            left: 30,
             child: DancingLogo(assetPath: 'assets/codeforces.png', index: 0),
           ),
           const Positioned(
             top: 100,
-            right: 40,
-            child: DancingLogo(assetPath: 'assets/leetcode.png', index: 1),
+            right: 30,
+            child: DancingLogo(assetPath: 'assets/codingninja.png', index: 1),
+          ),
+          const Positioned(
+            top: 240,
+            right: 140,
+            child: DancingLogo(assetPath: 'assets/leetcode.png', index: 4),
           ),
           const Positioned(
             bottom: 450,
-            left: 40,
+            left: 30,
             child: DancingLogo(assetPath: 'assets/codechef.png', index: 2),
           ),
           const Positioned(
-            bottom: 470,
-            right: 70,
+            bottom: 430,
+            right: 40,
             child: DancingLogo(assetPath: 'assets/atcoder.png', index: 3),
           ),
 

@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="#features"><img src="https://img.shields.io/badge/Platforms-4-1CD065?style=for-the-badge&logo=codeforces&logoColor=white" alt="Platforms"/></a>
+  <a href="#features"><img src="https://img.shields.io/badge/Platforms-5-1CD065?style=for-the-badge&logo=codeforces&logoColor=white" alt="Platforms"/></a>
   <a href="#tech-stack"><img src="https://img.shields.io/badge/Built_with-Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter"/></a>
   <a href="https://github.com/sambhandavale/CodeBuzzer/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License"/></a>
 </p>
@@ -26,7 +26,7 @@
 <br/>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Google+Sans&weight=600&size=22&pause=1000&color=1CD065&center=true&vCenter=true&width=500&lines=Supports+Codeforces%2C+LeetCode%2C+CodeChef;Background+sync+even+when+app+is+closed;Full-screen+alarm+that+actually+wakes+you;Beautiful+dark+glassmorphism+UI;100%25+free+and+open+source" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Google+Sans&weight=600&size=22&pause=1000&color=1CD065&center=true&vCenter=true&width=600&lines=Supports+Codeforces%2C+LeetCode%2C+CodeChef%2C+Coding+Ninjas;Background+sync+even+when+app+is+closed;Full-screen+alarm+that+actually+wakes+you;Beautiful+dark+glassmorphism+UI;100%25+free+and+open+source" alt="Typing SVG" />
 </p>
 
 ## 📸 Screenshots
@@ -80,14 +80,15 @@ The full-screen alarm rings **even when your phone is locked or the app is close
 
 ### 🌐 Multi-Platform Support
 
-| Platform       | Source                                 | Status              |
-| -------------- | -------------------------------------- | ------------------- |
-| **Codeforces** | Live API (`codeforces.com/api`)        | ✅ Real-time        |
-| **LeetCode**   | Hardcoded schedule (Weekly + Biweekly) | ✅ Always available |
-| **CodeChef**   | Hardcoded schedule (Weekly)            | ✅ Always available |
-| **AtCoder**    | —                                      | 🔜 Coming soon      |
+| Platform         | Source                                 | Status              |
+| ---------------- | -------------------------------------- | ------------------- |
+| **Codeforces**   | Live API (`codeforces.com/api`)        | ✅ Real-time        |
+| **LeetCode**     | Hardcoded schedule (Weekly + Biweekly) | ✅ Always available |
+| **CodeChef**     | Hardcoded schedule (Weekly)            | ✅ Always available |
+| **CodingNinjas** | Hardcoded schedule (Weekly)            | ✅ Always available |
+| **AtCoder**      | —                                      | 🔜 Coming soon      |
 
-> LeetCode and CodeChef contests follow fixed schedules, so they're generated locally — **no API dependency, no failures, works offline.**
+> LeetCode, CodeChef, and Coding Ninjas contests follow fixed schedules, so they're generated locally — **no API dependency, no failures, works offline.**
 
 ### 🔄 Background Sync (48h Auto-Refresh)
 
@@ -231,8 +232,9 @@ Contributions are welcome! Here are some ways you can help:
 ## 📋 Roadmap
 
 - [x] Codeforces real-time API integration
-- [x] LeetCode hardcoded weekly + biweekly contests
-- [x] CodeChef hardcoded weekly contests
+- [x] LeetCode weekly + biweekly contests
+- [x] CodeChef weekly contests
+- [x] Coding Ninjas weekly contests
 - [x] Multi-stage alarm cascade (30m, 10m, 5m, start)
 - [x] Background sync with WorkManager
 - [x] Custom alarm sounds

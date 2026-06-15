@@ -25,6 +25,9 @@ class ApiService {
     // 3. Manual CodeChef Generation
     allContests.addAll(_generateManualCodeChefContests());
 
+    // 4. Manual Coding Ninjas Generation
+    allContests.addAll(_generateManualCodingNinjasContests());
+
     // 4. Load stored manual alarms
     try {
       final manualAlarms = await _loadManualAlarms();
@@ -47,7 +50,9 @@ class ApiService {
 
   static Future<void> saveModifications(Contest contest) async {
     final prefs = await SharedPreferences.getInstance();
-    Map<String, dynamic> mods = json.decode(prefs.getString(modificationsKey) ?? '{}');
+    Map<String, dynamic> mods = json.decode(
+      prefs.getString(modificationsKey) ?? '{}',
+    );
     mods[contest.id] = {
       'is_alarm_active': contest.isAlarmActive,
       'snooze_count': contest.snoozeCount,
@@ -56,10 +61,14 @@ class ApiService {
     await prefs.setString(modificationsKey, json.encode(mods));
   }
 
-  static Future<List<Contest>> _applyModifications(List<Contest> contests) async {
+  static Future<List<Contest>> _applyModifications(
+    List<Contest> contests,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
-    Map<String, dynamic> mods = json.decode(prefs.getString(modificationsKey) ?? '{}');
-    
+    Map<String, dynamic> mods = json.decode(
+      prefs.getString(modificationsKey) ?? '{}',
+    );
+
     return contests.map((c) {
       if (mods.containsKey(c.id)) {
         final mod = mods[c.id];
@@ -76,7 +85,7 @@ class ApiService {
   static Future<void> saveManualAlarm(Contest contest) async {
     final prefs = await SharedPreferences.getInstance();
     List<String> stored = prefs.getStringList(manualAlarmsKey) ?? [];
-    
+
     // Check if it already exists (updating)
     int index = -1;
     for (int i = 0; i < stored.length; i++) {
@@ -92,7 +101,7 @@ class ApiService {
     } else {
       stored.add(json.encode(contest.toJson()));
     }
-    
+
     await prefs.setStringList(manualAlarmsKey, stored);
   }
 
@@ -114,7 +123,7 @@ class ApiService {
       try {
         final Map<String, dynamic> data = json.decode(s);
         final contest = Contest.fromJson(data);
-        
+
         // Keep alarms that haven't ended yet (or ended within the last 24h)
         if (contest.endTime.isAfter(now.subtract(const Duration(hours: 24)))) {
           alarms.add(contest);
@@ -129,7 +138,7 @@ class ApiService {
     if (updatedStored.length != stored.length) {
       await prefs.setStringList(manualAlarmsKey, updatedStored);
     }
-    
+
     return alarms;
   }
 
@@ -185,7 +194,9 @@ class ApiService {
       List<Contest> contests = [];
 
       for (var c in results) {
-        final start = DateTime.fromMillisecondsSinceEpoch(c['startTime'] * 1000);
+        final start = DateTime.fromMillisecondsSinceEpoch(
+          c['startTime'] * 1000,
+        );
         // Only include upcoming contests
         if (start.isAfter(DateTime.now())) {
           contests.add(
@@ -212,24 +223,26 @@ class ApiService {
     DateTime now = DateTime.now();
     // Anchor for Biweekly: June 6, 2026 at 8:00 PM
     DateTime biweeklyAnchor = DateTime(2026, 6, 6, 20, 0);
-    
+
     for (int i = 0; i < 30; i++) {
       DateTime day = now.add(Duration(days: i));
-      
+
       // Weekly Contest (Every Sunday 8:00 AM)
       if (day.weekday == DateTime.sunday) {
         DateTime contestStart = DateTime(day.year, day.month, day.day, 8, 0);
         if (contestStart.isAfter(now)) {
-          contests.add(Contest(
-            id: 'lc_weekly_${day.year}_${day.month}_${day.day}',
-            name: "LeetCode Weekly Contest",
-            url: "https://leetcode.com/contest/",
-            startTime: contestStart,
-            endTime: contestStart.add(const Duration(minutes: 90)),
-            duration: "5400",
-            site: "LeetCode",
-            status: "BEFORE",
-          ));
+          contests.add(
+            Contest(
+              id: 'lc_weekly_${day.year}_${day.month}_${day.day}',
+              name: "LeetCode Weekly Contest",
+              url: "https://leetcode.com/contest/",
+              startTime: contestStart,
+              endTime: contestStart.add(const Duration(minutes: 90)),
+              duration: "5400",
+              site: "LeetCode",
+              status: "BEFORE",
+            ),
+          );
         }
       }
 
@@ -237,19 +250,21 @@ class ApiService {
       if (day.weekday == DateTime.saturday) {
         DateTime contestStart = DateTime(day.year, day.month, day.day, 20, 0);
         int daysDifference = contestStart.difference(biweeklyAnchor).inDays;
-        
+
         if (daysDifference % 14 == 0) {
           if (contestStart.isAfter(now)) {
-            contests.add(Contest(
-              id: 'lc_biweekly_${day.year}_${day.month}_${day.day}',
-              name: "LeetCode Biweekly Contest",
-              url: "https://leetcode.com/contest/",
-              startTime: contestStart,
-              endTime: contestStart.add(const Duration(minutes: 90)),
-              duration: "5400",
-              site: "LeetCode",
-              status: "BEFORE",
-            ));
+            contests.add(
+              Contest(
+                id: 'lc_biweekly_${day.year}_${day.month}_${day.day}',
+                name: "LeetCode Biweekly Contest",
+                url: "https://leetcode.com/contest/",
+                startTime: contestStart,
+                endTime: contestStart.add(const Duration(minutes: 90)),
+                duration: "5400",
+                site: "LeetCode",
+                status: "BEFORE",
+              ),
+            );
           }
         }
       }
@@ -260,27 +275,64 @@ class ApiService {
   static List<Contest> _generateManualCodeChefContests() {
     List<Contest> contests = [];
     DateTime now = DateTime.now();
-    
+
     // Find the next 4 Wednesdays
     for (int i = 0; i < 30; i++) {
       DateTime day = now.add(Duration(days: i));
       if (day.weekday == DateTime.wednesday) {
         // Wednesday at 8:00 PM IST (20:00 IST = 14:30 UTC)
         DateTime contestStart = DateTime(day.year, day.month, day.day, 20, 0);
-        
+
         if (contestStart.isAfter(now)) {
-          contests.add(Contest(
-            id: 'cc_${day.year}_${day.month}_${day.day}', // Deterministic ID
-            name: "CodeChef Weekly Contest",
-            url: "https://www.codechef.com/contests",
-            startTime: contestStart,
-            endTime: contestStart.add(const Duration(hours: 3)),
-            duration: "10800",
-            site: "CodeChef",
-            status: "BEFORE",
-          ));
+          contests.add(
+            Contest(
+              id: 'cc_${day.year}_${day.month}_${day.day}', // Deterministic ID
+              name: "CodeChef Weekly Contest",
+              url: "https://www.codechef.com/contests",
+              startTime: contestStart,
+              endTime: contestStart.add(const Duration(hours: 3)),
+              duration: "10800",
+              site: "CodeChef",
+              status: "BEFORE",
+            ),
+          );
         }
-        
+
+        if (contests.length >= 4) break;
+      }
+    }
+    return contests;
+  }
+
+  static List<Contest> _generateManualCodingNinjasContests() {
+    List<Contest> contests = [];
+    DateTime now = DateTime.now();
+
+    // Find the next 4 Thursdays
+    for (int i = 0; i < 30; i++) {
+      DateTime day = now.add(Duration(days: i));
+      if (day.weekday == DateTime.thursday) {
+        // Thursday at 8:30 PM
+        DateTime contestStart = DateTime(day.year, day.month, day.day, 20, 30);
+
+        if (contestStart.isAfter(now)) {
+          contests.add(
+            Contest(
+              id: 'cn_${day.year}_${day.month}_${day.day}', // Deterministic ID
+              name: "360 Code Coding Ninjas Contest",
+              url: "https://www.naukri.com/code360/contests",
+              startTime: contestStart,
+              endTime: contestStart.add(
+                const Duration(hours: 2),
+              ), // Assume 2 hours
+              duration: "7200",
+              site: "CodingNinjas",
+              status: "BEFORE",
+              description: "https://www.naukri.com/code360/contests",
+            ),
+          );
+        }
+
         if (contests.length >= 4) break;
       }
     }

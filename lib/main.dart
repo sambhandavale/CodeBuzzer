@@ -25,7 +25,7 @@ void callbackDispatcher() {
       
       List<String> enabledSites =
           prefs.getStringList('enabled_sites') ??
-          ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder', 'Manual'];
+          ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder', 'CodingNinjas', 'Manual'];
 
       for (var contest in contests) {
         if (enabledSites.contains(contest.site)) {

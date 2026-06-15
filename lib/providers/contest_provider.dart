@@ -14,6 +14,7 @@ class ContestProvider extends ChangeNotifier {
     'LeetCode',
     'CodeChef',
     'AtCoder',
+    'CodingNinjas',
     'Manual',
   ];
   String? _selectedPlatformFilter;
@@ -87,7 +88,7 @@ class ContestProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       _enabledSites =
           prefs.getStringList('enabled_sites') ??
-          ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder', 'Manual'];
+          ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder', 'CodingNinjas', 'Manual'];
 
       final fetchedContests = await ApiService.fetchContests();
       _contests = fetchedContests;
@@ -125,7 +126,7 @@ class ContestProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     List<String> enabledSites =
         prefs.getStringList('enabled_sites') ??
-        ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder', 'Manual'];
+        ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder', 'CodingNinjas', 'Manual'];
 
     for (var contest in contests) {
       if (enabledSites.contains(contest.site)) {

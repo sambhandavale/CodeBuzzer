@@ -79,7 +79,10 @@ class AudioService(private val context: Context) {
 
                         else -> {
                             // Handle local files and adjusted paths
-                            setDataSource(adjustedFilePath)
+                            val file = java.io.File(adjustedFilePath)
+                            val fis = java.io.FileInputStream(file)
+                            setDataSource(fis.fd)
+                            fis.close()
                         }
                     }
                 }

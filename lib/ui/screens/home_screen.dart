@@ -684,6 +684,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     int lcCount = rawVisible.where((c) => c.site == 'LeetCode').length;
     int atCount = rawVisible.where((c) => c.site == 'AtCoder').length;
     int ccCount = rawVisible.where((c) => c.site == 'CodeChef').length;
+    int cnCount = rawVisible.where((c) => c.site == 'CodingNinjas').length;
     int manualCount = rawVisible.where((c) => c.site == 'Manual').length;
 
     return Padding(
@@ -706,6 +707,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ],
             if (provider.enabledSites.contains('AtCoder')) ...[
               _buildChip('AtCoder', atCount, provider),
+              const SizedBox(width: 8),
+            ],
+            if (provider.enabledSites.contains('CodingNinjas')) ...[
+              _buildChip('CodingNinjas', cnCount, provider),
               const SizedBox(width: 8),
             ],
             _buildChip('Manual', manualCount, provider),
@@ -1025,6 +1030,8 @@ class ContestCard extends StatelessWidget {
         return const Color(0xFFED8936);
       case 'codechef':
         return const Color(0xFF975A16);
+      case 'codingninjas':
+        return const Color(0xFFF15A24);
       default:
         return const Color(0xFF1CD065);
     }

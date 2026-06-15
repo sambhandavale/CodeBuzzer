@@ -20,6 +20,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _codeforces = true;
   bool _codechef = true;
   bool _atcoder = true;
+  bool _codingninjas = true;
   String? _customAlarmPath;
   String? _customAlarmName;
 
@@ -33,13 +34,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     List<String> enabledSites =
         prefs.getStringList('enabled_sites') ??
-        ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder'];
+        ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder', 'CodingNinjas'];
 
     setState(() {
       _leetcode = enabledSites.contains('LeetCode');
       _codeforces = enabledSites.contains('CodeForces');
       _codechef = enabledSites.contains('CodeChef');
       _atcoder = enabledSites.contains('AtCoder');
+      _codingninjas = enabledSites.contains('CodingNinjas');
       _customAlarmPath = prefs.getString('custom_alarm_path');
       _customAlarmName = prefs.getString('custom_alarm_name');
 
@@ -57,6 +59,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (_leetcode) enabledSites.add('LeetCode');
     if (_codechef) enabledSites.add('CodeChef');
     if (_atcoder) enabledSites.add('AtCoder');
+    if (_codingninjas) enabledSites.add('CodingNinjas');
     await prefs.setStringList('enabled_sites', enabledSites);
 
     if (mounted) {
@@ -192,6 +195,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   }),
                   _buildToggle('CodeChef', _codechef, (val) {
                     setState(() => _codechef = val);
+                    _savePrefs();
+                  }),
+                  _buildToggle('CodingNinjas', _codingninjas, (val) {
+                    setState(() => _codingninjas = val);
                     _savePrefs();
                   }),
                   _buildToggle('AtCoder', false, (val) {}, isComingSoon: true),
