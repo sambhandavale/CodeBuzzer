@@ -4,7 +4,8 @@
 
 <h1 align="center">CodeBuzzer</h1>
  -->
-<img width="1653" height="422" alt="Frame 35378" src="https://github.com/user-attachments/assets/c25a7241-cc2a-4074-8721-33ad637cccaf" />
+<img width="1653" height="422" alt="Frame 35378" src="https://github.com/user-attachments/assets/5f303667-84b0-406e-86ea-897ef17c05ec" />
+
 
 <p align="center">
   <strong>Never miss a competitive programming contest again.</strong><br/>
