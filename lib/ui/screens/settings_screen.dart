@@ -17,7 +17,8 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final GlobalKey _platformsKey = GlobalKey();
-  bool _tutorialShown = false;
+  final GlobalKey _permissionsKey = GlobalKey();
+  final GlobalKey _alarmSoundKey = GlobalKey();
   List<String> _disabledSites = [];
   String? _customAlarmPath;
   String? _customAlarmName;
@@ -220,7 +221,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Padding(
+                  Container(
+                    key: _permissionsKey,
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Column(
                       children: [
@@ -324,7 +326,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Padding(
+                  Container(
+                    key: _alarmSoundKey,
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Row(
                       children: [

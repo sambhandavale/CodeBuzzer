@@ -34,7 +34,7 @@
 
 <table>
   <tr>
-    <td align="center"><img src="assets/ss1.jpeg" width="300" alt="Landing Screen"/><br/><b>Onboarding</b></td>
+    <td align="center"><img src="assets/ss1.jpeg" width="300" alt="Tutorial Overlay"/><br/><b>Interactive Coach Marks</b></td>
     <td align="center"><img src="assets/ss2.jpeg" width="300" alt="Home Screen"/><br/><b>Contest Calendar</b></td>
   </tr>
   <tr>
@@ -116,13 +116,14 @@ Have a mock contest? A study session? An interview?
 - Set a title, description, and exact time
 - Full alarm support — just like contest reminders
 
-### 🎨 Premium Dark UI
+### 🎨 Premium Dark UI & UX
 
 - Glassmorphism design with frosted blur effects
-- Animated nebula landing screen with dancing platform logos
+- Interactive **Coach Marks** (Tutorial Overlays) for seamless onboarding
 - Smooth micro-animations and transitions
 - Green accent color palette (`#1CD065`)
 - Google Sans typography throughout
+- **Timezone-Aware:** All contest times automatically convert to your local timezone seamlessly.
 
 ### ⚙️ Full Customization
 
