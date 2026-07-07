@@ -12,6 +12,12 @@ class ContestFilterChips extends StatelessWidget {
     // We compute counts based on raw enabled sites, so they don't disappear when a filter is applied
     final rawVisible = provider.contests.toList();
 
+    // Filter to only current month for counting
+    final now = DateTime.now();
+    final currentMonthContests = rawVisible.where((c) => 
+      c.startTime.year == now.year && c.startTime.month == now.month
+    ).toList();
+
     final allSites = rawVisible.map((c) => c.site).where((s) => s != 'Manual').toSet().toList();
     
     // Sort base sites to front, custom sites alphabetically
@@ -25,7 +31,7 @@ class ContestFilterChips extends StatelessWidget {
       return a.compareTo(b);
     });
 
-    int manualCount = rawVisible.where((c) => c.site == 'Manual').length;
+    int manualCount = currentMonthContests.where((c) => c.site == 'Manual').length;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -34,7 +40,7 @@ class ContestFilterChips extends StatelessWidget {
         child: Row(
           children: [
             for (var site in allSites) ...[
-              _buildChip(site, rawVisible.where((c) => c.site == site).length, provider),
+              _buildChip(site, currentMonthContests.where((c) => c.site == site).length, provider),
               const SizedBox(width: 8),
             ],
             _buildChip('Manual', manualCount, provider),

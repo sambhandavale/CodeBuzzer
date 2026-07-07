@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:home_widget/home_widget.dart';
 import '../models/contest.dart';
 
 class ApiService {
@@ -77,7 +78,33 @@ class ApiService {
 
     // Sort globally by start time
     allContests.sort((a, b) => a.startTime.compareTo(b.startTime));
+
+    // Update the native Android widget
+    try {
+      await _updateWidgetData(allContests);
+    } catch (e) {
+      print('Widget update error: $e');
+    }
+
     return allContests;
+  }
+
+  static Future<void> _updateWidgetData(List<Contest> contests) async {
+    final now = DateTime.now();
+    final thirtyDaysLater = now.add(const Duration(days: 30));
+
+    // Filter to only upcoming contests within the next 30 days
+    final upcomingContests = contests.where((c) => 
+      c.endTime.isAfter(now) && c.startTime.isBefore(thirtyDaysLater)
+    ).toList();
+
+    // Serialize to JSON and save under a single key
+    await HomeWidget.saveWidgetData<String>('all_contests', json.encode(upcomingContests.map((e) => e.toJson()).toList()));
+    
+    await HomeWidget.updateWidget(
+      name: 'ContestWidgetProvider',
+      androidName: 'ContestWidgetProvider',
+    );
   }
 
   static Future<void> saveModifications(Contest contest) async {

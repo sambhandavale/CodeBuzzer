@@ -41,6 +41,9 @@
     <td align="center"><img src="assets/ss3.jpeg" width="300" alt="Alarm Screen"/><br/><b>Full-Screen Alarm</b></td>
     <td align="center"><img src="assets/ss4.jpeg" width="300" alt="Settings Screen"/><br/><b>Settings</b></td>
   </tr>
+  <tr>
+    <td align="center" colspan="2"><img src="assets/widget_ss.jpeg" width="600" alt="Home Screen Widget"/><br/><b>Android Home Screen Widget</b></td>
+  </tr>
 </table>
 
 ---
@@ -115,6 +118,14 @@ Have a mock contest? A study session? An interview?
 - Tap **"Add Alarm"** on any date to create your own custom reminder
 - Set a title, description, and exact time
 - Full alarm support — just like contest reminders
+
+### 🧩 Android Home Screen Widget
+
+Keep track of your contests without even opening the app!
+- **Today's Contests:** See all contests scheduled for today right on your home screen.
+- **Dynamic Platform Colors:** Widget cards automatically match the theme of the contest's platform.
+- **Smart Empty States:** Easily see if there are contests coming up tomorrow when today is clear.
+- **Clean Design:** A beautiful dark-mode interface with a minimalist, un-obtrusive layout.
 
 ### 🎨 Premium Dark UI & UX
 
@@ -260,7 +271,7 @@ Contributions are welcome! Here are some ways you can help:
 - [ ] Contest rating predictions
 - [ ] Contest problem difficulty analysis
 - [ ] iOS support
-- [ ] Widgets for home screen
+- [x] Widgets for home screen
 
 ---
 
