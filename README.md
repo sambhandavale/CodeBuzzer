@@ -19,7 +19,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/sambhandavale/CodeBuzzer/releases/latest/download/cb_v1.0.1.apk">
+  <a href="https://github.com/sambhandavale/CodeBuzzer/releases/latest/download/cb_v1.0.2.apk">
     <img src="https://img.shields.io/badge/⬇_DOWNLOAD_LATEST_APK-1CD065?style=for-the-badge&logoColor=white&labelColor=111214&color=1CD065" alt="Download" height="50"/>
   </a>
 </p>
