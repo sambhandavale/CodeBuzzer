@@ -42,7 +42,7 @@
     <td align="center"><img src="assets/ss4.jpeg" width="300" alt="Settings Screen"/><br/><b>Settings</b></td>
   </tr>
   <tr>
-    <td align="center" colspan="2"><img src="assets/widget_ss.jpeg" width="600" alt="Home Screen Widget"/><br/><b>Android Home Screen Widget</b></td>
+    <td align="center" colspan="2"><img src="assets/widget_ss.jpeg" width="300" alt="Home Screen Widget"/><br/><b>Android Home Screen Widget</b></td>
   </tr>
 </table>
 
