@@ -16,11 +16,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _leetcode = true;
-  bool _codeforces = true;
-  bool _codechef = true;
-  bool _atcoder = true;
-  bool _codingninjas = true;
+  List<String> _disabledSites = [];
   String? _customAlarmPath;
   String? _customAlarmName;
 
@@ -32,16 +28,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _loadPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    List<String> enabledSites =
-        prefs.getStringList('enabled_sites') ??
-        ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder', 'CodingNinjas'];
-
     setState(() {
-      _leetcode = enabledSites.contains('LeetCode');
-      _codeforces = enabledSites.contains('CodeForces');
-      _codechef = enabledSites.contains('CodeChef');
-      _atcoder = enabledSites.contains('AtCoder');
-      _codingninjas = enabledSites.contains('CodingNinjas');
+      _disabledSites = prefs.getStringList('disabled_sites') ?? [];
       _customAlarmPath = prefs.getString('custom_alarm_path');
       _customAlarmName = prefs.getString('custom_alarm_name');
 
@@ -54,16 +42,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _savePrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    List<String> enabledSites = [];
-    if (_codeforces) enabledSites.add('CodeForces');
-    if (_leetcode) enabledSites.add('LeetCode');
-    if (_codechef) enabledSites.add('CodeChef');
-    if (_atcoder) enabledSites.add('AtCoder');
-    if (_codingninjas) enabledSites.add('CodingNinjas');
-    await prefs.setStringList('enabled_sites', enabledSites);
+    await prefs.setStringList('disabled_sites', _disabledSites);
 
     if (mounted) {
-      context.read<ContestProvider>().updateEnabledSitesAndAlarms(enabledSites);
+      context.read<ContestProvider>().updateDisabledSitesAndAlarms(_disabledSites);
     }
   }
 
@@ -114,6 +96,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final contestProvider = context.watch<ContestProvider>();
+    final basePlatforms = ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder', 'CodingNinjas'];
+    final allPlatforms = (basePlatforms + contestProvider.contests.map((c) => c.site).toList())
+        .toSet()
+        .where((s) => s != 'Manual')
+        .toList();
+    allPlatforms.sort();
     return Scaffold(
       backgroundColor: const Color(0xFF111214),
       body: Stack(
@@ -185,23 +174,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  _buildToggle('CodeForces', _codeforces, (val) {
-                    setState(() => _codeforces = val);
-                    _savePrefs();
-                  }),
-                  _buildToggle('LeetCode', _leetcode, (val) {
-                    setState(() => _leetcode = val);
-                    _savePrefs();
-                  }),
-                  _buildToggle('CodeChef', _codechef, (val) {
-                    setState(() => _codechef = val);
-                    _savePrefs();
-                  }),
-                  _buildToggle('CodingNinjas', _codingninjas, (val) {
-                    setState(() => _codingninjas = val);
-                    _savePrefs();
-                  }),
-                  _buildToggle('AtCoder', false, (val) {}, isComingSoon: true),
+                  for (final site in allPlatforms)
+                    _buildToggle(
+                      site, 
+                      !_disabledSites.contains(site), 
+                      (val) {
+                        setState(() {
+                          if (val) {
+                            _disabledSites.remove(site);
+                          } else {
+                            _disabledSites.add(site);
+                          }
+                        });
+                        _savePrefs();
+                      }
+                    ),
                   const SizedBox(height: 30),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),

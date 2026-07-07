@@ -27,7 +27,7 @@
 <br/>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Google+Sans&weight=600&size=22&pause=1000&color=1CD065&center=true&vCenter=true&width=600&lines=Supports+Codeforces%2C+LeetCode%2C+CodeChef%2C+Coding+Ninjas;Background+sync+even+when+app+is+closed;Full-screen+alarm+that+actually+wakes+you;Beautiful+dark+glassmorphism+UI;100%25+free+and+open+source" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Google+Sans&weight=600&size=22&pause=1000&color=1CD065&center=true&vCenter=true&width=800&lines=Supports+Codeforces%2C+LeetCode%2C+CodeChef%2C+Coding+Ninjas%2C+Repovive%2C+AtCoder;Background+sync+even+when+app+is+closed;Full-screen+alarm+that+actually+wakes+you;Beautiful+dark+glassmorphism+UI;100%25+free+and+open+source" alt="Typing SVG" />
 </p>
 
 ## 📸 Screenshots
@@ -81,15 +81,18 @@ The full-screen alarm rings **even when your phone is locked or the app is close
 
 ### 🌐 Multi-Platform Support
 
+CodeBuzzer now features a **Dynamic Custom Platforms Engine**. It reads contest data from a remote JSON gist, allowing unlimited platforms to be supported seamlessly!
+
 | Platform         | Source                                 | Status              |
 | ---------------- | -------------------------------------- | ------------------- |
 | **Codeforces**   | Live API (`codeforces.com/api`)        | ✅ Real-time        |
 | **LeetCode**     | Hardcoded schedule (Weekly + Biweekly) | ✅ Always available |
 | **CodeChef**     | Hardcoded schedule (Weekly)            | ✅ Always available |
 | **CodingNinjas** | Hardcoded schedule (Weekly)            | ✅ Always available |
+| **Custom Sites** | Remote JSON Sync (e.g. `Repovive`)     | ✅ Dynamic sync     |
 | **AtCoder**      | —                                      | 🔜 Coming soon      |
 
-> LeetCode, CodeChef, and Coding Ninjas contests follow fixed schedules, so they're generated locally — **no API dependency, no failures, works offline.**
+> LeetCode, CodeChef, and Coding Ninjas contests follow fixed schedules, so they're generated locally. Custom platforms are fetched dynamically and automatically integrate into your filter chips and Settings!
 
 ### 🔄 Background Sync (48h Auto-Refresh)
 
@@ -165,8 +168,11 @@ lib/
     │   ├── main_screen.dart        # Bottom nav shell
     │   └── settings_screen.dart    # Platform toggles, sounds, permissions
     └── widgets/
-        ├── add_alarm_popup.dart    # Manual alarm creation sheet
-        └── mesh_background.dart    # Decorative background widget
+        ├── add_alarm_popup.dart      # Manual alarm creation sheet
+        ├── contest_card.dart         # Modular contest list item
+        ├── contest_filter_chips.dart # Dynamic platform filter chips
+        ├── horizontal_calendar.dart  # Scrollable date selector
+        └── mesh_background.dart      # Decorative background widget
 ```
 
 ---
@@ -241,6 +247,7 @@ Contributions are welcome! Here are some ways you can help:
 - [x] Custom alarm sounds
 - [x] Swipe-to-dismiss alarm screen
 - [x] Manual alarm creation
+- [x] Dynamic custom platforms via remote JSON
 - [ ] AtCoder support
 - [ ] Contest rating predictions
 - [ ] Contest problem difficulty analysis

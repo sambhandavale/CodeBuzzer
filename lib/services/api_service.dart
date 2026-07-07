@@ -7,6 +7,9 @@ class ApiService {
   static const String apiUrl = 'https://kontests.net/api/v1/all';
   static const String modificationsKey = 'contest_modifications';
   static const String manualAlarmsKey = 'manual_alarms';
+  // Replace this URL with your raw GitHub Gist URL
+  static const String staticContestsUrl =
+      'https://gist.githubusercontent.com/sambhandavale/dfbf2b95bf4c6f5def23281379071183/raw/4b01396aab6c6c607873ed4435676135c9e59e08/contests.json';
 
   static Future<List<Contest>> fetchContests() async {
     List<Contest> allContests = [];
@@ -17,6 +20,14 @@ class ApiService {
       allContests.addAll(cfContests);
     } catch (e) {
       print('CF Error: $e');
+    }
+
+    // 1.5 Fetch remote static JSON contests (Supplement/Overrides)
+    try {
+      final staticContests = await _fetchRemoteStaticContests();
+      allContests.addAll(staticContests);
+    } catch (e) {
+      print('Remote Static JSON Error: $e');
     }
 
     // 2. Manual LeetCode Generation (Hardcoded as requested)
@@ -140,6 +151,44 @@ class ApiService {
     }
 
     return alarms;
+  }
+
+  static Future<List<Contest>> _fetchRemoteStaticContests() async {
+    try {
+      final response = await http
+          .get(Uri.parse(staticContestsUrl))
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        List<Contest> contests = [];
+
+        for (var c in data) {
+          final start = DateTime.parse(c['startTime']).toLocal();
+          // Only include upcoming contests
+          if (start.isAfter(DateTime.now())) {
+            contests.add(
+              Contest(
+                id: c['id'],
+                name: c['name'],
+                url: c['url'],
+                startTime: start,
+                endTime: start.add(
+                  Duration(seconds: c['durationSeconds'] ?? 7200),
+                ),
+                duration: (c['durationSeconds'] ?? 7200).toString(),
+                site: c['site'],
+                status: c['status'] ?? 'BEFORE',
+              ),
+            );
+          }
+        }
+        return contests;
+      }
+    } catch (e) {
+      // It's okay if this fails (e.g., if the placeholder URL hasn't been changed yet)
+    }
+    return [];
   }
 
   static Future<List<Contest>> _fetchCodeForces() async {

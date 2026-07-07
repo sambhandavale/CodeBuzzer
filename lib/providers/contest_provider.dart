@@ -9,27 +9,18 @@ class ContestProvider extends ChangeNotifier {
   bool _isLoading = false;
   String _error = '';
   DateTime _selectedDate = DateTime.now();
-  List<String> _enabledSites = [
-    'CodeForces',
-    'LeetCode',
-    'CodeChef',
-    'AtCoder',
-    'CodingNinjas',
-    'Manual',
-  ];
+  List<String> _disabledSites = [];
   String? _selectedPlatformFilter;
 
   List<Contest> get contests => _contests;
   bool get isLoading => _isLoading;
   String get error => _error;
   DateTime get selectedDate => _selectedDate;
-  List<String> get enabledSites => _enabledSites;
+  List<String> get disabledSites => _disabledSites;
   String? get selectedPlatformFilter => _selectedPlatformFilter;
 
   List<Contest> get enabledContests {
-    var raw = _contests.where((c) {
-      return c.site == 'Manual' || _enabledSites.contains(c.site);
-    }).toList();
+    var raw = _contests.toList();
 
     if (_selectedPlatformFilter != null) {
       raw = raw.where((c) => c.site == _selectedPlatformFilter).toList();
@@ -86,9 +77,7 @@ class ContestProvider extends ChangeNotifier {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      _enabledSites =
-          prefs.getStringList('enabled_sites') ??
-          ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder', 'CodingNinjas', 'Manual'];
+      _disabledSites = prefs.getStringList('disabled_sites') ?? [];
 
       final fetchedContests = await ApiService.fetchContests();
       _contests = fetchedContests;
@@ -124,12 +113,10 @@ class ContestProvider extends ChangeNotifier {
 
   Future<void> _scheduleAutomatedAlarms(List<Contest> contests) async {
     final prefs = await SharedPreferences.getInstance();
-    List<String> enabledSites =
-        prefs.getStringList('enabled_sites') ??
-        ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder', 'CodingNinjas', 'Manual'];
+    List<String> disabledSites = prefs.getStringList('disabled_sites') ?? [];
 
     for (var contest in contests) {
-      if (enabledSites.contains(contest.site)) {
+      if (!disabledSites.contains(contest.site)) {
         try {
           if (contest.isAlarmActive) {
             await AlarmService.scheduleContestAlarm(contest);
@@ -152,6 +139,29 @@ class ContestProvider extends ChangeNotifier {
       _contests[index] = updatedContest;
 
       // 3. Persist
+      await ApiService.saveModifications(updatedContest);
+      notifyListeners();
+    }
+  }
+
+  Future<void> toggleAlarm(Contest contest) async {
+    final index = _contests.indexWhere((c) => c.id == contest.id);
+    if (index != -1) {
+      final oldContest = _contests[index];
+      final newIsActive = !oldContest.isAlarmActive;
+      final updatedContest = oldContest.copyWith(isAlarmActive: newIsActive);
+      _contests[index] = updatedContest;
+
+      if (newIsActive) {
+        if (updatedContest.site == 'Manual') {
+          await AlarmService.scheduleCustomAlarm(updatedContest);
+        } else {
+          await AlarmService.scheduleContestAlarm(updatedContest);
+        }
+      } else {
+        await AlarmService.stopAlarm(updatedContest.alarmId);
+      }
+
       await ApiService.saveModifications(updatedContest);
       notifyListeners();
     }
@@ -193,12 +203,12 @@ class ContestProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateEnabledSitesAndAlarms(List<String> newSites) async {
-    _enabledSites = newSites;
+  Future<void> updateDisabledSitesAndAlarms(List<String> newSites) async {
+    _disabledSites = newSites;
     // cancel alarms for disabled sites and re-schedule for enabled
     for (var contest in _contests) {
       if (contest.site != 'Manual') {
-        if (!newSites.contains(contest.site)) {
+        if (newSites.contains(contest.site)) {
           await AlarmService.stopAlarm(contest.alarmId);
         } else if (contest.isAlarmActive) {
           await AlarmService.scheduleContestAlarm(contest);
