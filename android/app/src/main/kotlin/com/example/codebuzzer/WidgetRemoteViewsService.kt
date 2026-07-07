@@ -32,7 +32,7 @@ class WidgetRemoteViewsFactory(private val context: Context) : RemoteViewsServic
         try {
             if (jsonString != null && jsonString != "null") {
                 val array = JSONArray(jsonString)
-                val today = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) } // offset by 1 day for testing
+                val today = Calendar.getInstance()
                 val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
                 
                 for (i in 0 until array.length()) {
