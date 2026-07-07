@@ -1,8 +1,8 @@
 name: codebuzzer
-description: "A new Flutter project."
+description: "A Competitive Programming Contest Reminder"
 publish_to: "none"
 
-version: 1.0.2+3
+version: 1.0.3+4
 
 environment:
   sdk: ">=3.10.4 <4.0.0"
