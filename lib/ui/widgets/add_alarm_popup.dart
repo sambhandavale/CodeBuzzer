@@ -3,6 +3,7 @@ import 'dart:ui';
 import '../../models/contest.dart';
 import '../../services/alarm_service.dart';
 import '../../services/api_service.dart';
+import '../../services/tutorial_service.dart';
 
 class AddAlarmPopup extends StatefulWidget {
   final Contest? initialContest;
@@ -14,6 +15,8 @@ class AddAlarmPopup extends StatefulWidget {
 }
 
 class _AddAlarmPopupState extends State<AddAlarmPopup> {
+  final GlobalKey _formKey = GlobalKey();
+  bool _tutorialShown = false;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
@@ -31,6 +34,26 @@ class _AddAlarmPopupState extends State<AddAlarmPopup> {
       _descController.text = widget.initialContest!.description;
       _selectedDate = widget.initialContest!.startTime;
       _selectedTime = TimeOfDay.fromDateTime(widget.initialContest!.startTime);
+    }
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndShowTutorial();
+    });
+  }
+
+  Future<void> _checkAndShowTutorial() async {
+    if (_tutorialShown) return;
+    _tutorialShown = true;
+    final hasSeen = await TutorialService.hasSeenPopupTutorial();
+    if (!hasSeen && mounted) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          TutorialService.showPopupTutorial(
+            context: context,
+            formKey: _formKey,
+          );
+        }
+      });
     }
   }
 
@@ -173,6 +196,7 @@ class _AddAlarmPopupState extends State<AddAlarmPopup> {
           border: Border.all(color: Colors.white10),
         ),
         child: SingleChildScrollView(
+          key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,

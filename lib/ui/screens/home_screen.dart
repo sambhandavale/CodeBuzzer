@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 import '../../providers/contest_provider.dart';
 import '../../models/contest.dart';
 import '../../services/api_service.dart';
+import '../../services/tutorial_service.dart';
+import 'main_screen.dart';
 import '../widgets/add_alarm_popup.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,6 +21,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+  final GlobalKey _headerKey = GlobalKey();
+  final GlobalKey _calendarKey = GlobalKey();
+  final GlobalKey _filterKey = GlobalKey();
+  bool _tutorialShown = false;
   bool _permissionsGranted = true;
 
   @override
@@ -52,6 +58,28 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (mounted) {
       setState(() {
         _permissionsGranted = granted;
+      });
+      _checkAndShowTutorial();
+    }
+  }
+
+  Future<void> _checkAndShowTutorial() async {
+    if (_tutorialShown) return;
+    _tutorialShown = true;
+    final hasSeen = await TutorialService.hasSeenHomeTutorial();
+    if (!hasSeen && mounted && _permissionsGranted) {
+      // Small delay to ensure layout is done
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          TutorialService.showHomeTutorial(
+            context: context,
+            headerKey: _headerKey,
+            calendarKey: _calendarKey,
+            filterKey: _filterKey,
+            addNavKey: addNavKey,
+            settingsNavKey: settingsNavKey,
+          );
+        }
       });
     }
   }
@@ -203,9 +231,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   ),
                 _buildHeader(),
                 const SizedBox(height: 24),
-                const HorizontalCalendar(),
-                const SizedBox(height: 16),
-                const ContestFilterChips(),
+                HorizontalCalendar(key: _calendarKey),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                  child: Text(
+                    'All times are in your local timezone.',
+                    style: TextStyle(color: Colors.white38, fontSize: 11, fontStyle: FontStyle.italic),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ContestFilterChips(key: _filterKey),
                 const SizedBox(height: 24),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -382,6 +417,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+      key: _headerKey,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

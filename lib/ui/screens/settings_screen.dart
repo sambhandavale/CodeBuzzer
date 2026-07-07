@@ -16,6 +16,8 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final GlobalKey _platformsKey = GlobalKey();
+  bool _tutorialShown = false;
   List<String> _disabledSites = [];
   String? _customAlarmPath;
   String? _customAlarmName;
@@ -174,21 +176,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  for (final site in allPlatforms)
-                    _buildToggle(
-                      site, 
-                      !_disabledSites.contains(site), 
-                      (val) {
-                        setState(() {
-                          if (val) {
-                            _disabledSites.remove(site);
-                          } else {
-                            _disabledSites.add(site);
-                          }
-                        });
-                        _savePrefs();
-                      }
+                  Container(
+                    key: _platformsKey,
+                    child: Column(
+                      children: [
+                        for (final site in allPlatforms)
+                          _buildToggle(
+                            site, 
+                            !_disabledSites.contains(site), 
+                            (val) {
+                              setState(() {
+                                if (val) {
+                                  _disabledSites.remove(site);
+                                } else {
+                                  _disabledSites.add(site);
+                                }
+                              });
+                              _savePrefs();
+                            }
+                          ),
+                      ],
                     ),
+                  ),
                   const SizedBox(height: 30),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),

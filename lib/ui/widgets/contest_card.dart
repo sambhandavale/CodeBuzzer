@@ -28,12 +28,25 @@ class ContestCard extends StatelessWidget {
     final bool isActive =
         contest.isAlarmActive && !isPlatformDisabled && contest.startTime.isAfter(DateTime.now());
 
-    return Opacity(
-      opacity: isActive ? 1.0 : 0.6,
-      child: GestureDetector(
-        onTap: () {
-          _showContestInfoSheet(context, context.read<ContestProvider>());
-        },
+    final now = DateTime.now();
+    final bool isPast = contest.endTime.isBefore(now);
+    final bool isOngoing = contest.startTime.isBefore(now) && contest.endTime.isAfter(now);
+    final semanticLabel = '${contest.name} on ${contest.site}. '
+        'Starts ${DateFormat('MMM d, h:mm a').format(contest.startTime)}. '
+        '${isPast ? "Ended" : isOngoing ? "Ongoing" : "Upcoming"}. '
+        'Alarm is ${contest.isAlarmActive ? "active" : "inactive"}. '
+        'Double tap to toggle alarm.';
+
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      onTapHint: 'View details',
+      child: Opacity(
+        opacity: isActive ? 1.0 : 0.6,
+        child: GestureDetector(
+          onTap: () {
+            _showContestInfoSheet(context, context.read<ContestProvider>());
+          },
         child: Container(
           margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
@@ -258,7 +271,7 @@ class ContestCard extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 
   void _showContestInfoSheet(BuildContext context, ContestProvider provider) {

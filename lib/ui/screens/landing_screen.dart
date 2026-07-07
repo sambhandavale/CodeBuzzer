@@ -83,9 +83,21 @@ class LandingScreen extends StatelessWidget {
                 ),
               ),
             ),
+            ListTile(
+              leading: Icon(Icons.battery_alert, color: Color(0xFF1CD065)),
+              title: Text(
+                'Battery Optimization',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontFamily: 'GoogleSans',
+                ),
+              ),
+            ),
           ],
         ),
         actions: [
+
           TextButton(
             onPressed: () async {
               await AlarmService.requestAllPermissions();

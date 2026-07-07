@@ -13,6 +13,9 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
+final GlobalKey settingsNavKey = GlobalKey();
+final GlobalKey addNavKey = GlobalKey();
+
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   bool _permissionsGranted = true;
@@ -104,6 +107,7 @@ class _MainScreenState extends State<MainScreen> {
     final iconColor = isSelected ? const Color(0xFF1CD065) : Colors.white;
 
     return GestureDetector(
+      key: index == 1 ? addNavKey : (index == 2 ? settingsNavKey : null),
       onTap: () {
         if (isAction) {
           _showAddAlarmPopup(context);
