@@ -26,7 +26,7 @@
 <br/>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Google+Sans&weight=600&size=22&pause=1000&color=1CD065&center=true&vCenter=true&width=800&lines=Supports+Codeforces%2C+LeetCode%2C+CodeChef%2C+Coding+Ninjas%2C+Repovive%2C+AtCoder;Background+sync+even+when+app+is+closed;Full-screen+alarm+that+actually+wakes+you;Beautiful+dark+glassmorphism+UI;100%25+free+and+open+source" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Google+Sans&weight=600&size=22&pause=1000&color=1CD065&center=true&vCenter=true&width=800&lines=Supports+Codeforces%2C+LeetCode%2C+CodeChef%2C+Coding+Ninjas;Background+sync+even+when+app+is+closed;Full-screen+alarm+that+actually+wakes+you;Beautiful+dark+glassmorphism+UI;100%25+free+and+open+source" alt="Typing SVG" />
 </p>
 
 ## 📸 Screenshots
