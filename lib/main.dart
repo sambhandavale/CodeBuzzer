@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:alarm/alarm.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,19 +20,22 @@ void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     try {
       WidgetsFlutterBinding.ensureInitialized();
+      await dotenv.load(fileName: ".env");
       await AlarmService.init();
 
       final contests = await ApiService.fetchContests();
       final prefs = await SharedPreferences.getInstance();
-      
-      List<String> enabledSites =
-          prefs.getStringList('enabled_sites') ??
-          ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder', 'CodingNinjas', 'Manual'];
+
+      List<String> disabledSites = prefs.getStringList('disabled_sites') ?? [];
 
       for (var contest in contests) {
-        if (enabledSites.contains(contest.site)) {
+        if (!disabledSites.contains(contest.site)) {
           if (contest.isAlarmActive) {
-            await AlarmService.scheduleContestAlarm(contest);
+            try {
+              await AlarmService.scheduleContestAlarm(contest);
+            } catch (e) {
+              // Ignore alarm scheduling errors in background sync
+            }
           }
         }
       }
@@ -43,19 +48,25 @@ void callbackDispatcher() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
 
-  Workmanager().initialize(
-    callbackDispatcher,
-    isInDebugMode: false,
-  );
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugPrint('FlutterError: ${details.exception}');
+  };
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('PlatformDispatcher Error: $error');
+    return true;
+  };
+
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
 
   Workmanager().registerPeriodicTask(
     "contest_sync_task",
     "syncContests",
     frequency: const Duration(hours: 48),
-    constraints: Constraints(
-      networkType: NetworkType.connected,
-    ),
+    constraints: Constraints(networkType: NetworkType.connected),
   );
 
   // Set system UI style for immersive experience

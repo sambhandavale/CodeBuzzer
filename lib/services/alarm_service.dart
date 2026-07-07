@@ -58,6 +58,11 @@ class AlarmService {
   }
 
   static Future<void> scheduleContestAlarm(Contest contest) async {
+    final exact = await Permission.scheduleExactAlarm.status;
+    if (!exact.isGranted) {
+      throw AlarmPermissionException('Exact alarm permission is required to schedule alarms.');
+    }
+
     DateTime notif30 = contest.startTime.subtract(const Duration(minutes: 30));
     DateTime notif10 = contest.startTime.subtract(const Duration(minutes: 10));
     DateTime ring5 = contest.startTime.subtract(const Duration(minutes: 5));
@@ -115,6 +120,10 @@ class AlarmService {
   }
 
   static Future<void> scheduleCustomAlarm(Contest contest) async {
+    final exact = await Permission.scheduleExactAlarm.status;
+    if (!exact.isGranted) {
+      throw AlarmPermissionException('Exact alarm permission is required to schedule alarms.');
+    }
     await _setAlarm(
       contest.alarmId,
       contest.startTime,
@@ -168,4 +177,11 @@ class AlarmService {
     await flutterLocalNotificationsPlugin.cancel(id: id + 2);
     await flutterLocalNotificationsPlugin.cancel(id: id + 3);
   }
+}
+
+class AlarmPermissionException implements Exception {
+  final String message;
+  AlarmPermissionException(this.message);
+  @override
+  String toString() => message;
 }

@@ -75,7 +75,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
                           height: 120 + (waveValue * 150),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: const Color(0xFF1CD065).withOpacity(
+                            color: const Color(0xFF1CD065).withValues(alpha: 
                               (1 - waveValue).clamp(0.0, 0.2),
                             ),
                           ),
@@ -91,12 +91,12 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
                       color: const Color(0xFF1C1E22),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: const Color(0xFF1CD065).withOpacity(0.5),
+                        color: const Color(0xFF1CD065).withValues(alpha: 0.5),
                         width: 2,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF1CD065).withOpacity(0.2),
+                          color: const Color(0xFF1CD065).withValues(alpha: 0.2),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -113,7 +113,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
               Text(
                 'CODEBUZZER REMINDER',
                 style: TextStyle(
-                  color: const Color(0xFF1CD065).withOpacity(0.8),
+                  color: const Color(0xFF1CD065).withValues(alpha: 0.8),
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 4,
@@ -221,9 +221,9 @@ class _SwipeActionSliderState extends State<SwipeActionSlider> {
       width: 300,
       height: 80,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -238,8 +238,8 @@ class _SwipeActionSliderState extends State<SwipeActionSlider> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.close, color: Colors.redAccent.withOpacity(0.7), size: 24),
-                      Text('Dismiss', style: TextStyle(color: Colors.redAccent.withOpacity(0.7), fontSize: 10, fontWeight: FontWeight.bold)),
+                      Icon(Icons.close, color: Colors.redAccent.withValues(alpha: 0.7), size: 24),
+                      Text('Dismiss', style: TextStyle(color: Colors.redAccent.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -251,8 +251,8 @@ class _SwipeActionSliderState extends State<SwipeActionSlider> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.snooze, color: Colors.amber.withOpacity(0.7), size: 24),
-                      Text('Snooze', style: TextStyle(color: Colors.amber.withOpacity(0.7), fontSize: 10, fontWeight: FontWeight.bold)),
+                      Icon(Icons.snooze, color: Colors.amber.withValues(alpha: 0.7), size: 24),
+                      Text('Snooze', style: TextStyle(color: Colors.amber.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -272,7 +272,7 @@ class _SwipeActionSliderState extends State<SwipeActionSlider> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF1CD065).withOpacity(0.4),
+                      color: const Color(0xFF1CD065).withValues(alpha: 0.4),
                       blurRadius: 15,
                       spreadRadius: 2,
                     ),

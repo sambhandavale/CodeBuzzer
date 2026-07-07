@@ -117,7 +117,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Container(
                   width: 150,
                   height: 150,
-                  color: const Color(0xFF1CD065).withOpacity(0.3),
+                  color: const Color(0xFF1CD065).withValues(alpha: 0.3),
                 ),
               ),
             ),
@@ -267,10 +267,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     margin: const EdgeInsets.symmetric(horizontal: 24),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1CD065).withOpacity(0.05),
+                      color: const Color(0xFF1CD065).withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: const Color(0xFF1CD065).withOpacity(0.1),
+                        color: const Color(0xFF1CD065).withValues(alpha: 0.1),
                       ),
                     ),
                     child: Row(
@@ -370,7 +370,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.white10),
         ),
@@ -442,7 +442,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           Switch(
             value: isComingSoon ? false : value,
-            activeColor: Colors.black,
+            activeThumbColor: Colors.black,
             activeTrackColor: const Color(0xFF1CD065),
             inactiveThumbColor: Colors.white24,
             inactiveTrackColor: Colors.white10,

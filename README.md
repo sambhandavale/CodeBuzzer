@@ -195,6 +195,13 @@ cd CodeBuzzer
 # Install dependencies
 flutter pub get
 
+# Set up environment variables
+# Copy .env.example to .env and configure your custom API endpoints
+cp .env.example .env
+
+# Run tests to ensure everything is stable
+flutter test
+
 # Run on your device
 flutter run
 

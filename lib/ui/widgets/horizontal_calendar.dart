@@ -40,7 +40,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
         decoration: BoxDecoration(
           color: const Color(0xFF1C1E22),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
         ),
         child: Icon(icon, color: Colors.white70, size: 20),
       ),
@@ -106,7 +106,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1CD065).withOpacity(0.1),
+                          color: const Color(0xFF1CD065).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Text(
@@ -189,19 +189,19 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                   width: 58,
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? const Color(0xFF1CD065).withOpacity(0.15)
+                        ? const Color(0xFF1CD065).withValues(alpha: 0.15)
                         : const Color(0xFF1C1E22),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isSelected
                           ? const Color(0xFF1CD065)
-                          : (isToday ? const Color(0xFF1CD065).withOpacity(0.5) : Colors.white.withOpacity(0.05)),
+                          : (isToday ? const Color(0xFF1CD065).withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.05)),
                       width: 1.5,
                     ),
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: const Color(0xFF1CD065).withOpacity(0.1),
+                              color: const Color(0xFF1CD065).withValues(alpha: 0.1),
                               blurRadius: 10,
                               spreadRadius: 1,
                             ),
@@ -231,7 +231,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                             fontWeight: FontWeight.w700,
                             letterSpacing: 0.5,
                             color: isSelected
-                                ? const Color(0xFF1CD065).withOpacity(0.7)
+                                ? const Color(0xFF1CD065).withValues(alpha: 0.7)
                                 : Colors.white24,
                           ),
                         ),
@@ -253,7 +253,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1CD065).withOpacity(0.2),
+                            color: const Color(0xFF1CD065).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(

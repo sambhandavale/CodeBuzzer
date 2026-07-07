@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 child: Container(
                   width: 150,
                   height: 150,
-                  color: const Color(0xFF1CD065).withOpacity(0.3),
+                  color: const Color(0xFF1CD065).withValues(alpha: 0.3),
                 ),
               ),
             ),
@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         vertical: 12,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.redAccent.withOpacity(0.9),
+                        color: Colors.redAccent.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Row(
@@ -238,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF1CD065).withOpacity(0.1),
+                              color: const Color(0xFF1CD065).withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -300,7 +300,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                 icon: const Icon(Icons.refresh, size: 18),
                                 label: const Text('Retry'),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF1CD065).withOpacity(0.2),
+                                  backgroundColor: const Color(0xFF1CD065).withValues(alpha: 0.2),
                                   foregroundColor: const Color(0xFF1CD065),
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(

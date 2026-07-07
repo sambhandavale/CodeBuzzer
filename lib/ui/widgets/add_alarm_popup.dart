@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'package:provider/provider.dart';
 import '../../models/contest.dart';
 import '../../services/alarm_service.dart';
 import '../../services/api_service.dart';
-import '../../providers/contest_provider.dart';
 
 class AddAlarmPopup extends StatefulWidget {
   final Contest? initialContest;
@@ -170,7 +168,7 @@ class _AddAlarmPopupState extends State<AddAlarmPopup> {
           top: 32,
         ),
         decoration: BoxDecoration(
-          color: const Color(0xFF111214).withOpacity(0.95),
+          color: const Color(0xFF111214).withValues(alpha: 0.95),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
           border: Border.all(color: Colors.white10),
         ),

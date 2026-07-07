@@ -1,3 +1,4 @@
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -49,7 +50,7 @@ class ContestCard extends StatelessWidget {
             boxShadow: isPrimary && isActive
                 ? [
                     BoxShadow(
-                      color: const Color(0xFF1CD065).withOpacity(0.1),
+                      color: const Color(0xFF1CD065).withValues(alpha: 0.1),
                       blurRadius: 20,
                       spreadRadius: 2,
                     ),
@@ -87,8 +88,8 @@ class ContestCard extends StatelessWidget {
                                 ),
                                 decoration: BoxDecoration(
                                   color: isPrimary
-                                      ? const Color(0xFF1CD065).withOpacity(0.1)
-                                      : Colors.white.withOpacity(0.05),
+                                      ? const Color(0xFF1CD065).withValues(alpha: 0.1)
+                                      : Colors.white.withValues(alpha: 0.05),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
@@ -115,7 +116,7 @@ class ContestCard extends StatelessWidget {
                                     _buildActionIcon(
                                       Icons.delete_outline,
                                       onDelete,
-                                      Colors.redAccent.withOpacity(0.8),
+                                      Colors.redAccent.withValues(alpha: 0.8),
                                     ),
                                   ],
                                 ),
@@ -191,7 +192,7 @@ class ContestCard extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         color: const Color(
                                           0xFFBCA628,
-                                        ).withOpacity(0.15),
+                                        ).withValues(alpha: 0.15),
                                         borderRadius: BorderRadius.circular(30),
                                       ),
                                       child: Text(
@@ -214,8 +215,8 @@ class ContestCard extends StatelessWidget {
                                       color: isActive
                                           ? const Color(
                                               0xFF1CD065,
-                                            ).withOpacity(0.1)
-                                          : Colors.white.withOpacity(0.05),
+                                            ).withValues(alpha: 0.1)
+                                          : Colors.white.withValues(alpha: 0.05),
                                       borderRadius: BorderRadius.circular(30),
                                     ),
                                     child: Row(
@@ -305,7 +306,7 @@ class ContestCard extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: _getPlatformColor(contest.site).withOpacity(0.1),
+                      color: _getPlatformColor(contest.site).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -348,7 +349,7 @@ class ContestCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (isPlatformDisabled) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Enable ${contest.site} in Settings to set alarms.')),
@@ -356,8 +357,41 @@ class ContestCard extends StatelessWidget {
                       Navigator.pop(context);
                       return;
                     }
-                    provider.toggleAlarm(contest);
-                    Navigator.pop(context);
+                    
+                    try {
+                      await provider.toggleAlarm(contest);
+                      if (context.mounted) Navigator.pop(context);
+                    } catch (e) {
+                      if (e.toString().contains('AlarmPermissionException')) {
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              backgroundColor: const Color(0xFF1C1E22),
+                              title: const Text('Permission Required'),
+                              content: const Text(
+                                  'Exact alarm permission is required. Please enable it in Settings.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Cancel',
+                                      style: TextStyle(color: Colors.white70)),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    openAppSettings();
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Open Settings',
+                                      style: TextStyle(color: Color(0xFF1CD065))),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      }
+                    }
                   },
                   child: Text(
                     isActive ? 'DEACTIVATE ALARM' : 'ACTIVATE ALARM',
@@ -407,7 +441,7 @@ class ContestCard extends StatelessWidget {
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             side: BorderSide(
-                              color: Colors.redAccent.withOpacity(0.5),
+                              color: Colors.redAccent.withValues(alpha: 0.5),
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -494,7 +528,7 @@ class ContestCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.03),
+          color: Colors.white.withValues(alpha: 0.03),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, size: 18, color: color),

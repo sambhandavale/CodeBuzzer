@@ -152,18 +152,25 @@ class ContestProvider extends ChangeNotifier {
       final updatedContest = oldContest.copyWith(isAlarmActive: newIsActive);
       _contests[index] = updatedContest;
 
-      if (newIsActive) {
-        if (updatedContest.site == 'Manual') {
-          await AlarmService.scheduleCustomAlarm(updatedContest);
+      try {
+        if (newIsActive) {
+          if (updatedContest.site == 'Manual') {
+            await AlarmService.scheduleCustomAlarm(updatedContest);
+          } else {
+            await AlarmService.scheduleContestAlarm(updatedContest);
+          }
         } else {
-          await AlarmService.scheduleContestAlarm(updatedContest);
+          await AlarmService.stopAlarm(updatedContest.alarmId);
         }
-      } else {
-        await AlarmService.stopAlarm(updatedContest.alarmId);
-      }
 
-      await ApiService.saveModifications(updatedContest);
-      notifyListeners();
+        await ApiService.saveModifications(updatedContest);
+        notifyListeners();
+      } catch (e) {
+        // Revert UI state on failure
+        _contests[index] = oldContest;
+        notifyListeners();
+        rethrow;
+      }
     }
   }
 

@@ -53,7 +53,7 @@ class ContestFilterChips extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFF1CD065).withOpacity(0.2)
+              ? const Color(0xFF1CD065).withValues(alpha: 0.2)
               : const Color(0xFF1C1E22),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(

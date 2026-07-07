@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/contest.dart';
 
@@ -7,17 +8,18 @@ class ApiService {
   static const String apiUrl = 'https://kontests.net/api/v1/all';
   static const String modificationsKey = 'contest_modifications';
   static const String manualAlarmsKey = 'manual_alarms';
-  // Replace this URL with your raw GitHub Gist URL
-  static const String staticContestsUrl =
-      'https://gist.githubusercontent.com/sambhandavale/dfbf2b95bf4c6f5def23281379071183/raw/4b01396aab6c6c607873ed4435676135c9e59e08/contests.json';
+  static String get staticContestsUrl => dotenv.env['STATIC_CONTESTS_URL'] ?? '';
 
   static Future<List<Contest>> fetchContests() async {
     List<Contest> allContests = [];
+    bool cfSuccess = false;
+    bool staticSuccess = false;
 
     // 1. Fetch from Codeforces API
     try {
       final cfContests = await _fetchCodeForces();
       allContests.addAll(cfContests);
+      cfSuccess = true;
     } catch (e) {
       print('CF Error: $e');
     }
@@ -26,8 +28,27 @@ class ApiService {
     try {
       final staticContests = await _fetchRemoteStaticContests();
       allContests.addAll(staticContests);
+      staticSuccess = true;
     } catch (e) {
       print('Remote Static JSON Error: $e');
+    }
+
+    // 1.6 Offline caching fallback
+    if (!cfSuccess && !staticSuccess) {
+      final prefs = await SharedPreferences.getInstance();
+      final cachedStr = prefs.getString('cached_remote_contests');
+      if (cachedStr != null) {
+        try {
+          final List<dynamic> data = json.decode(cachedStr);
+          allContests.addAll(data.map((c) => Contest.fromJson(c)));
+        } catch (e) {
+          print('Cache parsing error: $e');
+        }
+      }
+    } else {
+      // Save new successful fetch to cache
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('cached_remote_contests', json.encode(allContests.map((c) => c.toJson()).toList()));
     }
 
     // 2. Manual LeetCode Generation (Hardcoded as requested)
@@ -193,7 +214,7 @@ class ApiService {
 
   static Future<List<Contest>> _fetchCodeForces() async {
     final response = await http
-        .get(Uri.parse('https://codeforces.com/api/contest.list'))
+        .get(Uri.parse(dotenv.env['CODEFORCES_API_URL'] ?? 'https://codeforces.com/api/contest.list'))
         .timeout(const Duration(seconds: 10));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);

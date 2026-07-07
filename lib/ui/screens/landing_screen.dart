@@ -185,7 +185,7 @@ class LandingScreen extends StatelessWidget {
                     'Automated high-volume alarms that wake you up exactly when competitive programming contests start.',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white.withOpacity(0.6),
+                      color: Colors.white.withValues(alpha: 0.6),
                       height: 1.5,
                       fontFamily: 'GoogleSans',
                     ),
@@ -207,7 +207,7 @@ class LandingScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1CD065).withOpacity(0.15),
+            color: const Color(0xFF1CD065).withValues(alpha: 0.15),
             blurRadius: 30,
             spreadRadius: 2,
           ),
@@ -297,7 +297,7 @@ class _NebulaBlobState extends State<_NebulaBlob>
             width: widget.size + (50 * _controller.value),
             height: widget.size + (50 * _controller.value),
             decoration: BoxDecoration(
-              color: widget.color.withOpacity(0.3 + (0.2 * _controller.value)),
+              color: widget.color.withValues(alpha: 0.3 + (0.2 * _controller.value)),
               shape: BoxShape.circle,
             ),
           ),
