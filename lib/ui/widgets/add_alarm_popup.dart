@@ -28,14 +28,14 @@ class _AddAlarmPopupState extends State<AddAlarmPopup> {
     if (widget.initialDate != null) {
       _selectedDate = widget.initialDate!;
     }
-    
+
     if (widget.initialContest != null) {
       _titleController.text = widget.initialContest!.name;
       _descController.text = widget.initialContest!.description;
       _selectedDate = widget.initialContest!.startTime;
       _selectedTime = TimeOfDay.fromDateTime(widget.initialContest!.startTime);
     }
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAndShowTutorial();
     });
@@ -110,9 +110,9 @@ class _AddAlarmPopupState extends State<AddAlarmPopup> {
 
   Future<void> _schedule() async {
     if (_titleController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a title')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please enter a title')));
       return;
     }
 
@@ -124,7 +124,9 @@ class _AddAlarmPopupState extends State<AddAlarmPopup> {
       _selectedTime.minute,
     );
 
-    if (startDateTime.isBefore(DateTime.now().add(const Duration(minutes: 1)))) {
+    if (startDateTime.isBefore(
+      DateTime.now().add(const Duration(minutes: 1)),
+    )) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Time must be in the future')),
       );
@@ -132,7 +134,9 @@ class _AddAlarmPopupState extends State<AddAlarmPopup> {
     }
 
     try {
-      final id = widget.initialContest?.id ?? 'manual_${DateTime.now().millisecondsSinceEpoch}';
+      final id =
+          widget.initialContest?.id ??
+          'manual_${DateTime.now().millisecondsSinceEpoch}';
 
       final dummyContest = Contest(
         id: id,
@@ -160,12 +164,16 @@ class _AddAlarmPopupState extends State<AddAlarmPopup> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(widget.initialContest != null 
-                ? 'Alarm updated successfully!' 
-                : 'Alarm scheduled successfully!'),
+            content: Text(
+              widget.initialContest != null
+                  ? 'Alarm updated successfully!'
+                  : 'Alarm scheduled successfully!',
+            ),
             backgroundColor: const Color(0xFF1CD065),
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
         Navigator.pop(context, true);
@@ -173,7 +181,10 @@ class _AddAlarmPopupState extends State<AddAlarmPopup> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.redAccent),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.redAccent,
+          ),
         );
       }
     }
@@ -181,87 +192,109 @@ class _AddAlarmPopupState extends State<AddAlarmPopup> {
 
   @override
   Widget build(BuildContext context) {
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-      child: Container(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 24,
-          right: 24,
-          top: 32,
-        ),
-        decoration: BoxDecoration(
-          color: const Color(0xFF111214).withValues(alpha: 0.95),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-          border: Border.all(color: Colors.white10),
-        ),
-        child: SingleChildScrollView(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-               Text(
-                widget.initialContest != null ? 'Edit Alarm' : 'Manual Alarm',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        child: Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 24,
+            right: 24,
+            top: 32,
+          ),
+          decoration: BoxDecoration(
+            color: const Color(0xFF111214).withValues(alpha: 0.7),
+            border: Border(
+              top: BorderSide(
+                color: const Color(0xFF1CD065).withValues(alpha: 0.3),
+                width: 1,
               ),
-              const SizedBox(height: 24),
-              _buildField(_titleController, 'Title', Icons.title),
-              const SizedBox(height: 16),
-              _buildField(_descController, 'Description', Icons.description, maxLines: 2),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildPicker(
-                      label: '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
-                      icon: Icons.calendar_today,
-                      onTap: _pickDate,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildPicker(
-                      label: _selectedTime.format(context),
-                      icon: Icons.access_time,
-                      onTap: _pickTime,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1CD065),
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
-                  onPressed: _schedule,
-                  child: Text(
-                    widget.initialContest != null ? 'UPDATE ALARM' : 'SCHEDULE ALARM',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+            ),
+          ),
+          child: SingleChildScrollView(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.initialContest != null ? 'Edit Alarm' : 'Manual Alarm',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
                   ),
                 ),
-              ),
-              const SizedBox(height: 40),
-            ],
+                const SizedBox(height: 24),
+                _buildField(_titleController, 'Title', Icons.title),
+                const SizedBox(height: 16),
+                _buildField(
+                  _descController,
+                  'Description',
+                  Icons.description,
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildPicker(
+                        label:
+                            '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                        icon: Icons.calendar_today,
+                        onTap: _pickDate,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildPicker(
+                        label: _selectedTime.format(context),
+                        icon: Icons.access_time,
+                        onTap: _pickTime,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1CD065),
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    onPressed: _schedule,
+                    child: Text(
+                      widget.initialContest != null
+                          ? 'UPDATE ALARM'
+                          : 'SCHEDULE ALARM',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildField(TextEditingController controller, String label, IconData icon, {int maxLines = 1}) {
+  Widget _buildField(
+    TextEditingController controller,
+    String label,
+    IconData icon, {
+    int maxLines = 1,
+  }) {
     return TextField(
       controller: controller,
       maxLines: maxLines,
@@ -280,7 +313,11 @@ class _AddAlarmPopupState extends State<AddAlarmPopup> {
     );
   }
 
-  Widget _buildPicker({required String label, required IconData icon, required VoidCallback onTap}) {
+  Widget _buildPicker({
+    required String label,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(

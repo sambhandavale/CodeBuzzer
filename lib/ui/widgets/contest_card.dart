@@ -2,6 +2,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'dart:ui';
 import '../../models/contest.dart';
 import '../../providers/contest_provider.dart';
 
@@ -277,25 +278,37 @@ class ContestCard extends StatelessWidget {
   void _showContestInfoSheet(BuildContext context, ContestProvider provider) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1C1E22),
+      backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-      ),
+      elevation: 0,
       builder: (context) {
         final bool isPlatformDisabled = provider.disabledSites.contains(contest.site);
         // Need to re-evaluate isActive inside the builder to ensure it's fresh
         final bool isActive =
             contest.isAlarmActive && !isPlatformDisabled && contest.startTime.isAfter(DateTime.now());
 
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom + 24,
-            left: 24,
-            right: 24,
-            top: 32,
-          ),
-          child: Column(
+        return ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF111214).withValues(alpha: 0.7),
+                border: Border(
+                  top: BorderSide(
+                    color: const Color(0xFF1CD065).withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+                  left: 24,
+                  right: 24,
+                  top: 32,
+                ),
+                child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -481,7 +494,10 @@ class ContestCard extends StatelessWidget {
               const SizedBox(height: 32),
             ],
           ),
-        );
+        ),
+      ),
+    ),
+  );
       },
     );
   }

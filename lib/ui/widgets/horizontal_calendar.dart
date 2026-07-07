@@ -59,7 +59,10 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
     List<DateTime> days = [];
     if (provider.selectedPlatformFilter != null) {
       final contestDates = provider.enabledContests
-          .map((c) => DateTime(c.startTime.year, c.startTime.month, c.startTime.day))
+          .map(
+            (c) =>
+                DateTime(c.startTime.year, c.startTime.month, c.startTime.day),
+          )
           .toSet()
           .toList();
       contestDates.sort((a, b) => a.compareTo(b));
@@ -69,6 +72,23 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
         lastDayOfMonth.day,
         (index) => DateTime(_focusedMonth.year, _focusedMonth.month, index + 1),
       );
+    }
+
+    final int contestCount;
+    final now = DateTime.now();
+    if (provider.selectedPlatformFilter != null) {
+      contestCount = provider.enabledContests
+          .where((c) => c.endTime.isAfter(now))
+          .length;
+    } else {
+      contestCount = provider.enabledContests
+          .where(
+            (c) =>
+                c.startTime.year == _focusedMonth.year &&
+                c.startTime.month == _focusedMonth.month &&
+                c.endTime.isAfter(now),
+          )
+          .length;
     }
 
     return Column(
@@ -90,35 +110,30 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  if (_focusedMonth.year != DateTime.now().year ||
-                      _focusedMonth.month != DateTime.now().month)
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _focusedMonth = DateTime.now();
-                          provider.setSelectedDate(DateTime.now());
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1CD065).withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text(
-                          'TODAY',
-                          style: TextStyle(
-                            color: Color(0xFF1CD065),
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1CD065).withValues(alpha: 0.1),
+                      border: Border.all(
+                        color: const Color(0xFF1CD065).withValues(alpha: 0.3),
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '$contestCount Upcoming'.toUpperCase(),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF1CD065),
+                        letterSpacing: 0.5,
                       ),
                     ),
+                  ),
+                  const SizedBox(width: 12),
                 ],
               ),
               Row(
@@ -165,7 +180,8 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                   provider.selectedDate.year == date.year;
 
               final now = DateTime.now();
-              final isToday = now.day == date.day &&
+              final isToday =
+                  now.day == date.day &&
                   now.month == date.month &&
                   now.year == date.year;
 
@@ -195,13 +211,17 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                     border: Border.all(
                       color: isSelected
                           ? const Color(0xFF1CD065)
-                          : (isToday ? const Color(0xFF1CD065).withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.05)),
+                          : (isToday
+                                ? const Color(0xFF1CD065).withValues(alpha: 0.5)
+                                : Colors.white.withValues(alpha: 0.05)),
                       width: 1.5,
                     ),
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: const Color(0xFF1CD065).withValues(alpha: 0.1),
+                              color: const Color(
+                                0xFF1CD065,
+                              ).withValues(alpha: 0.1),
                               blurRadius: 10,
                               spreadRadius: 1,
                             ),
@@ -242,7 +262,9 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: isSelected || isToday ? Colors.white : Colors.white70,
+                          color: isSelected || isToday
+                              ? Colors.white
+                              : Colors.white70,
                         ),
                       ),
                       if (contestCount > 0 && !isSelected) ...[
@@ -253,7 +275,9 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1CD065).withValues(alpha: 0.2),
+                            color: const Color(
+                              0xFF1CD065,
+                            ).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(

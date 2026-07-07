@@ -294,7 +294,7 @@ class ApiService {
     // Anchor for Biweekly: June 6, 2026 at 8:00 PM
     DateTime biweeklyAnchor = DateTime(2026, 6, 6, 20, 0);
 
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 365; i++) {
       DateTime day = now.add(Duration(days: i));
 
       // Weekly Contest (Every Sunday 8:00 AM)
@@ -346,8 +346,7 @@ class ApiService {
     List<Contest> contests = [];
     DateTime now = DateTime.now();
 
-    // Find the next 4 Wednesdays
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 365; i++) {
       DateTime day = now.add(Duration(days: i));
       if (day.weekday == DateTime.wednesday) {
         // Wednesday at 8:00 PM IST (20:00 IST = 14:30 UTC)
@@ -368,7 +367,6 @@ class ApiService {
           );
         }
 
-        if (contests.length >= 4) break;
       }
     }
     return contests;
@@ -378,8 +376,7 @@ class ApiService {
     List<Contest> contests = [];
     DateTime now = DateTime.now();
 
-    // Find the next 4 Thursdays
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 365; i++) {
       DateTime day = now.add(Duration(days: i));
       if (day.weekday == DateTime.thursday) {
         // Thursday at 8:30 PM
@@ -403,7 +400,6 @@ class ApiService {
           );
         }
 
-        if (contests.length >= 4) break;
       }
     }
     return contests;
