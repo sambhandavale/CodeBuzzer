@@ -6,7 +6,6 @@
  -->
 <img width="1653" height="422" alt="Frame 35378" src="https://github.com/user-attachments/assets/5f303667-84b0-406e-86ea-897ef17c05ec" />
 
-
 <p align="center">
   <strong>Never miss a competitive programming contest again.</strong><br/>
   <em>A beautiful, fully-automated alarm app that wakes you up before every contest — even if you forget.</em>
@@ -35,7 +34,7 @@
 <table>
   <tr>
     <td align="center"><img src="assets/ss1.jpeg" width="300" alt="Tutorial Overlay"/><br/><b>Interactive Coach Marks</b></td>
-    <td align="center"><img src="assets/ss2.jpeg" width="300" alt="Home Screen"/><br/><b>Contest Calendar</b></td>
+    <td align="center"><img src="assets/ss5.jpeg" width="300" alt="Home Screen"/><br/><b>Contest Calendar</b></td>
   </tr>
   <tr>
     <td align="center"><img src="assets/ss3.jpeg" width="300" alt="Alarm Screen"/><br/><b>Full-Screen Alarm</b></td>
@@ -122,6 +121,7 @@ Have a mock contest? A study session? An interview?
 ### 🧩 Android Home Screen Widget
 
 Keep track of your contests without even opening the app!
+
 - **Today's Contests:** See all contests scheduled for today right on your home screen.
 - **Dynamic Platform Colors:** Widget cards automatically match the theme of the contest's platform.
 - **Smart Empty States:** Easily see if there are contests coming up tomorrow when today is clear.
