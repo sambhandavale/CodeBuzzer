@@ -28,14 +28,28 @@ void callbackDispatcher() {
 
       List<String> disabledSites = prefs.getStringList('disabled_sites') ?? [];
 
+      final now = DateTime.now();
+      final scheduleLimit = now.add(const Duration(days: 5));
+
       for (var contest in contests) {
-        if (!disabledSites.contains(contest.site)) {
-          if (contest.isAlarmActive) {
-            try {
-              await AlarmService.scheduleContestAlarm(contest);
-            } catch (e) {
-              // Ignore alarm scheduling errors in background sync
-            }
+        if (contest.site == 'Manual') continue;
+
+        bool isDisabled = disabledSites.contains(contest.site);
+        bool isUpcoming =
+            contest.startTime.isAfter(now) &&
+            contest.startTime.isBefore(scheduleLimit);
+
+        if (!isDisabled && contest.isAlarmActive && isUpcoming) {
+          try {
+            await AlarmService.scheduleContestAlarm(contest);
+          } catch (e) {
+            // Ignore alarm scheduling errors in background sync
+          }
+        } else if (isDisabled || contest.startTime.isAfter(scheduleLimit)) {
+          try {
+            await AlarmService.stopAlarm(contest.alarmId);
+          } catch (e) {
+            // Ignore
           }
         }
       }

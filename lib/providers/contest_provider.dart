@@ -114,16 +114,25 @@ class ContestProvider extends ChangeNotifier {
   Future<void> _scheduleAutomatedAlarms(List<Contest> contests) async {
     final prefs = await SharedPreferences.getInstance();
     List<String> disabledSites = prefs.getStringList('disabled_sites') ?? [];
+    
+    final now = DateTime.now();
+    final scheduleLimit = now.add(const Duration(days: 5));
 
     for (var contest in contests) {
-      if (!disabledSites.contains(contest.site)) {
-        try {
-          if (contest.isAlarmActive) {
-            await AlarmService.scheduleContestAlarm(contest);
-          }
-        } catch (e) {
-          // ignore individual alarm errors
+      if (contest.site == 'Manual') continue; // Manual alarms handled separately
+      
+      bool isDisabled = disabledSites.contains(contest.site);
+      bool isUpcoming = contest.startTime.isAfter(now) && contest.startTime.isBefore(scheduleLimit);
+
+      try {
+        if (!isDisabled && contest.isAlarmActive && isUpcoming) {
+          await AlarmService.scheduleContestAlarm(contest);
+        } else if (isDisabled || contest.startTime.isAfter(scheduleLimit)) {
+          // Clean up far future alarms or disabled site alarms to free up Android limits
+          await AlarmService.stopAlarm(contest.alarmId);
         }
+      } catch (e) {
+        // ignore individual alarm errors
       }
     }
   }
