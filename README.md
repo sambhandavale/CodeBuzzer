@@ -165,26 +165,32 @@ Keep track of your contests without even opening the app!
 ```
 lib/
 ├── main.dart                      # App entry + WorkManager setup
+├── data/
+│   └── dsa_quotes.dart            # Hardcoded DSA tips and quotes database
 ├── models/
 │   └── contest.dart               # Contest data model
 ├── providers/
 │   └── contest_provider.dart      # State management & alarm scheduling
 ├── services/
 │   ├── alarm_service.dart         # Alarm & notification scheduling
-│   └── api_service.dart           # API calls + hardcoded contest generation
+│   ├── api_service.dart           # API calls + hardcoded contest generation
+│   └── tutorial_service.dart      # Coach marks & interactive onboarding
 └── ui/
     ├── screens/
     │   ├── alarm_ring_screen.dart  # Full-screen alarm with swipe actions
     │   ├── home_screen.dart        # Calendar + contest list
     │   ├── landing_screen.dart     # Animated onboarding
     │   ├── main_screen.dart        # Bottom nav shell
-    │   └── settings_screen.dart    # Platform toggles, sounds, permissions
+    │   ├── settings_screen.dart    # Platform toggles, sounds, permissions
+    │   └── splash_screen.dart      # App initialization with DSA typewriter
     └── widgets/
         ├── add_alarm_popup.dart      # Manual alarm creation sheet
         ├── contest_card.dart         # Modular contest list item
         ├── contest_filter_chips.dart # Dynamic platform filter chips
+        ├── glass_container.dart      # Reusable liquid glassmorphism UI component
         ├── horizontal_calendar.dart  # Scrollable date selector
-        └── mesh_background.dart      # Decorative background widget
+        ├── mesh_background.dart      # Decorative background widget
+        └── skeleton_loader.dart      # Pulsing loading animation for contests
 ```
 
 ---
