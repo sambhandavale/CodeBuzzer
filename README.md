@@ -1,9 +1,3 @@
-<!-- <p align="center">
-  <img src="assets/logo.png" width="120" alt="CodeBuzzer Logo"/>
-</p>
-
-<h1 align="center">CodeBuzzer</h1>
- -->
 <img width="1653" height="422" alt="Frame 35378" src="https://github.com/user-attachments/assets/5f303667-84b0-406e-86ea-897ef17c05ec" />
 
 <p align="center">
@@ -33,15 +27,22 @@
 
 <table>
   <tr>
-    <td align="center"><img src="assets/ss1.jpeg" width="300" alt="Tutorial Overlay"/><br/><b>Interactive Coach Marks</b></td>
-    <td align="center"><img src="assets/ss5.jpeg" width="300" alt="Home Screen"/><br/><b>Contest Calendar</b></td>
+    <td align="center"><img width="300" alt="WhatsApp Image 2026-07-12 at 16 08 42" src="https://github.com/user-attachments/assets/cee2815c-f94c-46d9-820a-ab1edaefb51e" />
+<br/><b>Landing Page</b></td>
+    <td align="center"><img width="300" alt="WhatsApp Image 2026-07-12 at 16 08 42 (2)" src="https://github.com/user-attachments/assets/76d3411e-fba7-4bfc-8f0e-fd71b21264d5" />
+<br/><b>Contest Calendar</b></td>
+    <td align="center"><img width="300" alt="WhatsApp Image 2026-07-12 at 16 08 42 (1)" src="https://github.com/user-attachments/assets/de40b76e-becc-48ee-87fe-9923a6efe285" />
+
+<br/><b>Loading Screen</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="assets/ss3.jpeg" width="300" alt="Alarm Screen"/><br/><b>Full-Screen Alarm</b></td>
-    <td align="center"><img src="assets/ss4.jpeg" width="300" alt="Settings Screen"/><br/><b>Settings</b></td>
-  </tr>
-  <tr>
-    <td align="center" colspan="2"><img src="assets/widget_ss.jpeg" width="300" alt="Home Screen Widget"/><br/><b>Android Home Screen Widget</b></td>
+    <td align="center"><img width="300" alt="ss3" src="https://github.com/user-attachments/assets/8bab4afc-4a78-444a-aeb7-88ae435effd6" />
+<br/><b>Full-Screen Alarm</b></td>
+    <td align="center"><img width="300" alt="WhatsApp Image 2026-07-12 at 16 08 42 (3)" src="https://github.com/user-attachments/assets/51b9f1c7-b9f7-498a-8226-6cf3cb858211" />
+<br/><b>Settings</b></td>
+    <td align="center" colspan="2"><img width="300" alt="WhatsApp Image 2026-07-12 at 16 08 41" src="https://github.com/user-attachments/assets/4e49ba56-a05f-4c51-a760-ec0171e557a5" />
+
+<br/><b>Android Home Screen Widget</b></td>
   </tr>
 </table>
 
