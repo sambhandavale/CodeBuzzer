@@ -92,8 +92,7 @@ CodeBuzzer now features a **Dynamic Custom Platforms Engine**. It reads contest 
 | **LeetCode**     | Hardcoded schedule (Weekly + Biweekly) | ✅ Always available |
 | **CodeChef**     | Hardcoded schedule (Weekly)            | ✅ Always available |
 | **CodingNinjas** | Hardcoded schedule (Weekly)            | ✅ Always available |
-| **Custom Sites** | Remote JSON Sync (e.g. `Repovive`)     | ✅ Dynamic sync     |
-| **AtCoder**      | —                                      | 🔜 Coming soon      |
+| **Custom Sites** | Remote JSON Sync (e.g. `Repovive, AtCoder`)     | ✅ Dynamic sync     |
 
 > LeetCode, CodeChef, and Coding Ninjas contests follow fixed schedules, so they're generated locally. Custom platforms are fetched dynamically and automatically integrate into your filter chips and Settings!
 
@@ -268,11 +267,11 @@ Contributions are welcome! Here are some ways you can help:
 - [x] Swipe-to-dismiss alarm screen
 - [x] Manual alarm creation
 - [x] Dynamic custom platforms via remote JSON
-- [ ] AtCoder support
+- [x] Widgets for home screen
+- [x] AtCoder support
 - [ ] Contest rating predictions
 - [ ] Contest problem difficulty analysis
 - [ ] iOS support
-- [x] Widgets for home screen
 
 ---
 
