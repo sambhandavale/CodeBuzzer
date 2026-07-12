@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
+import '../../services/tutorial_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -22,11 +23,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
   List<String> _disabledSites = [];
   String? _customAlarmPath;
   String? _customAlarmName;
+  bool _autoAlarmsExpanded = false;
+  bool _tutorialShown = false;
 
   @override
   void initState() {
     super.initState();
     _loadPrefs();
+    _checkAndShowTutorial();
+  }
+
+  Future<void> _checkAndShowTutorial() async {
+    if (_tutorialShown) return;
+    _tutorialShown = true;
+    final hasSeen = await TutorialService.hasSeenSettingsTutorial();
+    if (!hasSeen && mounted) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          TutorialService.showSettingsTutorial(
+            context: context,
+            platformsKey: _platformsKey,
+            permissionsKey: _permissionsKey,
+            alarmSoundKey: _alarmSoundKey,
+          );
+        }
+      });
+    }
   }
 
   Future<void> _loadPrefs() async {
@@ -48,7 +70,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await prefs.setStringList('disabled_sites', _disabledSites);
 
     if (mounted) {
-      context.read<ContestProvider>().updateDisabledSitesAndAlarms(_disabledSites);
+      context.read<ContestProvider>().updateDisabledSitesAndAlarms(
+        _disabledSites,
+      );
     }
   }
 
@@ -100,11 +124,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final contestProvider = context.watch<ContestProvider>();
-    final basePlatforms = ['CodeForces', 'LeetCode', 'CodeChef', 'AtCoder', 'CodingNinjas'];
-    final allPlatforms = (basePlatforms + contestProvider.contests.map((c) => c.site).toList())
-        .toSet()
-        .where((s) => s != 'Manual')
-        .toList();
+    final basePlatforms = [
+      'CodeForces',
+      'LeetCode',
+      'CodeChef',
+      'AtCoder',
+      'CodingNinjas',
+    ];
+    final allPlatforms =
+        (basePlatforms + contestProvider.contests.map((c) => c.site).toList())
+            .toSet()
+            .where((s) => s != 'Manual')
+            .toList();
     allPlatforms.sort();
     return Scaffold(
       backgroundColor: const Color(0xFF111214),
@@ -157,14 +188,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   Padding(
+                    key: _platformsKey,
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Text(
-                      'AUTO ALARMS',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -1.0,
-                        color: Colors.white,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _autoAlarmsExpanded = !_autoAlarmsExpanded;
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'AUTO ALARMS',
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -1.0,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Icon(
+                            _autoAlarmsExpanded
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                            color: Colors.white54,
+                            size: 32,
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -176,16 +227,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       style: TextStyle(fontSize: 14, color: Colors.white54),
                     ),
                   ),
-                  const SizedBox(height: 30),
-                  Container(
-                    key: _platformsKey,
-                    child: Column(
-                      children: [
-                        for (final site in allPlatforms)
-                          _buildToggle(
-                            site, 
-                            !_disabledSites.contains(site), 
-                            (val) {
+                  const SizedBox(height: 10),
+                  AnimatedCrossFade(
+                    duration: const Duration(milliseconds: 300),
+                    crossFadeState: _autoAlarmsExpanded
+                        ? CrossFadeState.showSecond
+                        : CrossFadeState.showFirst,
+                    firstChild: const SizedBox(width: double.infinity),
+                    secondChild: Container(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Column(
+                        children: [
+                          for (final site in allPlatforms)
+                            _buildToggle(site, !_disabledSites.contains(site), (
+                              val,
+                            ) {
                               setState(() {
                                 if (val) {
                                   _disabledSites.remove(site);
@@ -194,9 +250,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 }
                               });
                               _savePrefs();
-                            }
-                          ),
-                      ],
+                            }),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 30),

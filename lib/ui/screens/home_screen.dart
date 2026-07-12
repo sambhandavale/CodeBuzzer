@@ -12,6 +12,7 @@ import '../../services/api_service.dart';
 import '../../services/tutorial_service.dart';
 import 'main_screen.dart';
 import '../widgets/add_alarm_popup.dart';
+import '../widgets/skeleton_loader.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -193,7 +194,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       _checkPermissions();
                     },
                     child: Container(
-                      margin: const EdgeInsets.only(left: 24, right: 24, top: 16),
+                      margin: const EdgeInsets.only(
+                        left: 24,
+                        right: 24,
+                        top: 16,
+                      ),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,
@@ -233,10 +238,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 const SizedBox(height: 24),
                 HorizontalCalendar(key: _calendarKey),
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 8.0,
+                  ),
                   child: Text(
                     'All times are in your local timezone.',
-                    style: TextStyle(color: Colors.white38, fontSize: 11, fontStyle: FontStyle.italic),
+                    style: TextStyle(
+                      color: Colors.white38,
+                      fontSize: 11,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -273,7 +285,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF1CD065).withValues(alpha: 0.1),
+                              color: const Color(
+                                0xFF1CD065,
+                              ).withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -285,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'Add Alarm',
+                                  'Add Reminder',
                                   style: const TextStyle(
                                     color: Color(0xFF1CD065),
                                     fontSize: 10,
@@ -314,11 +328,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 const SizedBox(height: 16),
                 Expanded(
                   child: contestProvider.isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xFF1CD065),
-                          ),
-                        )
+                      ? const ContestSkeletonList()
                       : contestProvider.error.isNotEmpty
                       ? Center(
                           child: Column(
@@ -331,11 +341,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               ),
                               const SizedBox(height: 16),
                               ElevatedButton.icon(
-                                onPressed: () => contestProvider.fetchContests(force: true),
+                                onPressed: () =>
+                                    contestProvider.fetchContests(force: true),
                                 icon: const Icon(Icons.refresh, size: 18),
                                 label: const Text('Retry'),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF1CD065).withValues(alpha: 0.2),
+                                  backgroundColor: const Color(
+                                    0xFF1CD065,
+                                  ).withValues(alpha: 0.2),
                                   foregroundColor: const Color(0xFF1CD065),
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
@@ -353,23 +366,25 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               contestProvider.fetchContests(force: true),
                           child: contestProvider.filteredContests.isEmpty
                               ? ListView(
-                                  physics: const AlwaysScrollableScrollPhysics(),
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
                                   padding: const EdgeInsets.only(top: 100),
                                   children: [
                                     Center(
                                       child: Text(
                                         'No contests on this date',
-                                        style: TextStyle(
-                                          color: Colors.white54,
-                                        ),
+                                        style: TextStyle(color: Colors.white54),
                                       ),
                                     ),
                                   ],
                                 )
                               : ListView.builder(
-                                  physics: const AlwaysScrollableScrollPhysics(),
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
                                   padding: const EdgeInsets.only(
-                                    left: 24, right: 24, bottom: 120,
+                                    left: 24,
+                                    right: 24,
+                                    bottom: 120,
                                   ),
                                   itemCount:
                                       contestProvider.filteredContests.length,
@@ -457,6 +472,4 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ),
     );
   }
-
 }
-

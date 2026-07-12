@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'home_screen.dart';
 import 'settings_screen.dart';
 import '../widgets/add_alarm_popup.dart';
+import '../widgets/glass_container.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -67,19 +68,11 @@ class _MainScreenState extends State<MainScreen> {
             left: 0,
             right: 0,
             child: Center(
-              child: Container(
+              child: GlassContainer(
                 padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF444444),
-                  borderRadius: BorderRadius.circular(50),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
+                borderRadius: BorderRadius.circular(50),
+                blur: 25.0,
+                opacity: 0.1,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

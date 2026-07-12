@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'ui/screens/splash_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:ui';
 import 'package:flutter/services.dart';
@@ -62,7 +63,6 @@ void callbackDispatcher() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
@@ -74,15 +74,6 @@ void main() async {
     return true;
   };
 
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
-
-  Workmanager().registerPeriodicTask(
-    "contest_sync_task",
-    "syncContests",
-    frequency: const Duration(hours: 48),
-    constraints: Constraints(networkType: NetworkType.connected),
-  );
-
   // Set system UI style for immersive experience
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -93,22 +84,16 @@ void main() async {
     ),
   );
 
-  await AlarmService.init();
-
-  final prefs = await SharedPreferences.getInstance();
-  final bool hasSeenLanding = prefs.getBool('has_seen_landing') ?? false;
-
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => ContestProvider())],
-      child: MyApp(hasSeenLanding: hasSeenLanding),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatefulWidget {
-  final bool hasSeenLanding;
-  const MyApp({super.key, required this.hasSeenLanding});
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -148,7 +133,7 @@ class _MyAppState extends State<MyApp> {
         ),
         useMaterial3: true,
       ),
-      home: widget.hasSeenLanding ? const MainScreen() : const LandingScreen(),
+      home: const SplashScreen(),
     );
   }
 }

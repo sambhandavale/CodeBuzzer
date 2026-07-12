@@ -262,4 +262,84 @@ class TutorialService {
       },
     ).show(context: context);
   }
+
+  static void showSettingsTutorial({
+    required BuildContext context,
+    required GlobalKey platformsKey,
+    required GlobalKey permissionsKey,
+    required GlobalKey alarmSoundKey,
+  }) {
+    List<TargetFocus> targets = [
+      TargetFocus(
+        identify: "TargetPlatforms",
+        keyTarget: platformsKey,
+        shape: ShapeLightFocus.RRect,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            builder: (context, controller) {
+              return _buildGlassContainer(
+                context: context,
+                controller: controller,
+                title: "Auto Alarms",
+                description: "Toggle which platforms automatically schedule a 5-minute reminder. Tap the header above to expand/collapse this list!",
+              );
+            },
+          )
+        ],
+      ),
+      TargetFocus(
+        identify: "TargetPermissions",
+        keyTarget: permissionsKey,
+        shape: ShapeLightFocus.RRect,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return _buildGlassContainer(
+                context: context,
+                controller: controller,
+                title: "Permissions",
+                description: "Ensure these are granted so your alarms fire accurately even when the app is completely closed.",
+              );
+            },
+          )
+        ],
+      ),
+      TargetFocus(
+        identify: "TargetAlarmSound",
+        keyTarget: alarmSoundKey,
+        shape: ShapeLightFocus.RRect,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return _buildGlassContainer(
+                context: context,
+                controller: controller,
+                title: "Custom Sound",
+                description: "Pick your own loud MP3 or WAV file to make sure you never sleep through a contest again!",
+                buttonText: "Got It",
+              );
+            },
+          )
+        ],
+      ),
+    ];
+
+    TutorialCoachMark(
+      targets: targets,
+      colorShadow: const Color(0xFF111214),
+      textSkip: "SKIP",
+      paddingFocus: 10,
+      opacityShadow: 0.8,
+      onFinish: () {
+        markSettingsTutorialSeen();
+      },
+      onSkip: () {
+        markSettingsTutorialSeen();
+        return true;
+      },
+    ).show(context: context);
+  }
 }
