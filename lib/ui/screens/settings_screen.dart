@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:home_widget/home_widget.dart';
 import '../../services/tutorial_service.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -414,6 +415,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ],
                       ],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Text(
+                      'HOME SCREEN WIDGET',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Text(
+                      'Pin the CodeBuzzer widget to your phone\'s home screen to see today\'s contests at a glance.',
+                      style: TextStyle(fontSize: 14, color: Colors.white54),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          try {
+                            await HomeWidget.requestPinWidget(
+                              name: 'ContestWidgetProvider',
+                              androidName: 'ContestWidgetProvider',
+                            );
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Failed or not supported on this launcher.')),
+                              );
+                            }
+                          }
+                        },
+                        icon: const Icon(Icons.widgets, size: 18),
+                        label: const Text('ADD WIDGET'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1CD065),
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(

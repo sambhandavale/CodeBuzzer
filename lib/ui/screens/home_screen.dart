@@ -13,6 +13,8 @@ import '../../services/tutorial_service.dart';
 import 'main_screen.dart';
 import '../widgets/add_alarm_popup.dart';
 import '../widgets/skeleton_loader.dart';
+import 'package:home_widget/home_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -69,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     _tutorialShown = true;
     final hasSeen = await TutorialService.hasSeenHomeTutorial();
     if (!hasSeen && mounted && _permissionsGranted) {
-      // Small delay to ensure layout is done
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
           TutorialService.showHomeTutorial(
@@ -79,9 +80,69 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             filterKey: _filterKey,
             addNavKey: addNavKey,
             settingsNavKey: settingsNavKey,
+            onFinish: () {
+              if (mounted) {
+                _checkAndShowWidgetPromo();
+              }
+            },
           );
         }
       });
+    } else if (mounted) {
+      _checkAndShowWidgetPromo();
+    }
+  }
+
+  Future<void> _checkAndShowWidgetPromo() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool hasSeen = prefs.getBool('has_seen_widget_promo') ?? false;
+
+    if (!hasSeen && mounted) {
+      prefs.setBool('has_seen_widget_promo', true);
+      
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: const Color(0xFF1C1E22),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Row(
+            children: const [
+              Icon(Icons.widgets_outlined, color: Color(0xFF1CD065)),
+              SizedBox(width: 10),
+              Text('Home Screen Widget', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          content: const Text(
+            'Did you know you can add a CodeBuzzer widget to your phone\'s home screen to see today\'s contests at a glance?\n\nYou can add it now, or do it later from Settings!',
+            style: TextStyle(color: Colors.white70, height: 1.4),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('LATER', style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold)),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                try {
+                  await HomeWidget.requestPinWidget(
+                    name: 'ContestWidgetProvider',
+                    androidName: 'ContestWidgetProvider',
+                  );
+                } catch (e) {
+                  debugPrint('Failed to pin widget: $e');
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1CD065),
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text('ADD WIDGET', style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      );
     }
   }
 

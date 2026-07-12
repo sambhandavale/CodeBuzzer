@@ -9,8 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
 import 'services/alarm_service.dart';
 import 'services/api_service.dart';
-import 'ui/screens/landing_screen.dart';
-import 'ui/screens/main_screen.dart';
 import 'ui/screens/alarm_ring_screen.dart';
 import 'providers/contest_provider.dart';
 

@@ -149,6 +149,7 @@ class TutorialService {
     required GlobalKey filterKey,
     required GlobalKey addNavKey,
     required GlobalKey settingsNavKey,
+    VoidCallback? onFinish,
   }) {
     List<TargetFocus> targets = [
       TargetFocus(
@@ -252,12 +253,14 @@ class TutorialService {
       opacityShadow: 0.8,
       onFinish: () {
         markHomeTutorialSeen();
+        if (onFinish != null) onFinish();
       },
       onClickTarget: (target) {
         // do nothing
       },
       onSkip: () {
         markHomeTutorialSeen();
+        if (onFinish != null) onFinish();
         return true;
       },
     ).show(context: context);
