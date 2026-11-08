@@ -82,19 +82,30 @@ class _SplashScreenState extends State<SplashScreen> {
   void _onQuoteFinished() {
     _isQuoteFinishedTyping = true;
     
-    // Always wait 3 seconds after a quote finishes typing so the user can read it.
-    _gapTimer = Timer(const Duration(seconds: 3), () {
+    // Snappy 1.2s delay after quote finishes so user can read it without feeling stuck
+    _gapTimer = Timer(const Duration(milliseconds: 1200), () {
       if (!mounted) return;
       
       if (_isAppInitialized) {
-        // If background init is done, navigate into the app
         _navigate();
       } else {
-        // If background init is STILL running, show another quote
         _pickNextQuote();
         _startTyping();
       }
     });
+  }
+
+  void _skipSplash() {
+    if (_isAppInitialized) {
+      _navigate();
+    } else {
+      // Complete typing immediately
+      _typingTimer?.cancel();
+      setState(() {
+        _displayedText = _currentQuote;
+        _isQuoteFinishedTyping = true;
+      });
+    }
   }
 
   Future<void> _initApp() async {
@@ -149,93 +160,106 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF111214),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(flex: 3),
-              // Logo
-              Center(
-                child: Hero(
-                  tag: 'app_logo',
-                  child: Image.asset(
-                    'assets/logo.png',
-                    width: 120,
-                    height: 120,
-                    fit: BoxFit.contain,
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: _skipSplash,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Spacer(flex: 3),
+                // Logo
+                Center(
+                  child: Hero(
+                    tag: 'app_logo',
+                    child: Image.asset(
+                      'assets/logo.png',
+                      width: 120,
+                      height: 120,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'CodeBuzzer',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w900,
-                  color: Color(0xFF1CD065),
-                  letterSpacing: 1.5,
+                const SizedBox(height: 24),
+                const Text(
+                  'CodeBuzzer',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF1CD065),
+                    letterSpacing: 1.5,
+                  ),
                 ),
-              ),
-              const Spacer(flex: 2),
-              
-              // Loading Indicator
-              const SizedBox(
-                width: 40,
-                height: 40,
-                child: CircularProgressIndicator(
-                  color: Color(0xFF1CD065),
-                  strokeWidth: 3,
+                const Spacer(flex: 2),
+                
+                // Loading Indicator
+                const SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: CircularProgressIndicator(
+                    color: Color(0xFF1CD065),
+                    strokeWidth: 3,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 40),
+                const SizedBox(height: 40),
 
-              // DSA Quote Container with Fixed Height to prevent jumping
-              Container(
-                height: 120,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1C1E22),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFF2C2F36)),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.lightbulb_outline, color: Color(0xFF1CD065), size: 16),
-                        SizedBox(width: 8),
-                        Text(
-                          "DSA TIP OF THE DAY",
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1.2,
-                            color: Color(0xFF1CD065),
+                // DSA Quote Container with Fixed Height to prevent jumping
+                Container(
+                  height: 120,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1C1E22),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFF2C2F36)),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.lightbulb_outline, color: Color(0xFF1CD065), size: 16),
+                          SizedBox(width: 8),
+                          Text(
+                            "DSA TIP OF THE DAY",
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.2,
+                              color: Color(0xFF1CD065),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    Text(
-                      "$_displayedText${!_isQuoteFinishedTyping ? '|' : ''}",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white70,
-                        height: 1.4,
-                        fontStyle: FontStyle.italic,
+                        ],
                       ),
-                    ),
-                    const Spacer(),
-                  ],
+                      const Spacer(),
+                      Text(
+                        "$_displayedText${!_isQuoteFinishedTyping ? '|' : ''}",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white70,
+                          height: 1.4,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
                 ),
-              ),
-              const Spacer(flex: 1),
-            ],
+                const SizedBox(height: 12),
+                const Text(
+                  'Tap anywhere to skip',
+                  style: TextStyle(
+                    color: Colors.white24,
+                    fontSize: 11,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const Spacer(flex: 1),
+              ],
+            ),
           ),
         ),
       ),

@@ -32,6 +32,33 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
     super.dispose();
   }
 
+  void _changeMonth(int delta, ContestProvider provider) {
+    final newMonth = DateTime(_focusedMonth.year, _focusedMonth.month + delta);
+    setState(() {
+      _focusedMonth = newMonth;
+    });
+
+    if (provider.selectedPlatformFilter == null) {
+      final now = DateTime.now();
+      DateTime newSelectedDate;
+      if (newMonth.year == now.year && newMonth.month == now.month) {
+        newSelectedDate = now;
+      } else {
+        newSelectedDate = DateTime(newMonth.year, newMonth.month, 1);
+      }
+      provider.setSelectedDate(newSelectedDate);
+
+      double offset = (newSelectedDate.day - 3).clamp(0, 31) * 70.0;
+      if (_calendarScrollController.hasClients) {
+        _calendarScrollController.animateTo(
+          offset,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    }
+  }
+
   Widget _buildNavButton(IconData icon, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -136,29 +163,20 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                   const SizedBox(width: 12),
                 ],
               ),
-              Row(
-                children: [
-                  _buildNavButton(
-                    Icons.chevron_left,
-                    () => setState(() {
-                      _focusedMonth = DateTime(
-                        _focusedMonth.year,
-                        _focusedMonth.month - 1,
-                      );
-                    }),
-                  ),
-                  const SizedBox(width: 8),
-                  _buildNavButton(
-                    Icons.chevron_right,
-                    () => setState(() {
-                      _focusedMonth = DateTime(
-                        _focusedMonth.year,
-                        _focusedMonth.month + 1,
-                      );
-                    }),
-                  ),
-                ],
-              ),
+              if (provider.selectedPlatformFilter == null)
+                Row(
+                  children: [
+                    _buildNavButton(
+                      Icons.chevron_left,
+                      () => _changeMonth(-1, provider),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildNavButton(
+                      Icons.chevron_right,
+                      () => _changeMonth(1, provider),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),

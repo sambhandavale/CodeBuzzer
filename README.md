@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/sambhandavale/CodeBuzzer/releases/latest/download/cb_v1.0.3.apk">
+  <a href="https://github.com/sambhandavale/CodeBuzzer/releases/latest/download/cb_v1.0.4.apk">
     <img src="https://img.shields.io/badge/⬇_DOWNLOAD_LATEST_APK-1CD065?style=for-the-badge&logoColor=white&labelColor=111214&color=1CD065" alt="Download" height="50"/>
   </a>
 </p>
@@ -127,14 +127,25 @@ Keep track of your contests without even opening the app!
 - **Smart Empty States:** Easily see if there are contests coming up tomorrow when today is clear.
 - **Clean Design:** A beautiful dark-mode interface with a minimalist, un-obtrusive layout.
 
+### 📅 Google Calendar Export
+
+Want rounds saved to your personal schedule?
+- **One-Tap Export:** Tap "ADD TO GOOGLE CALENDAR" on any contest card to automatically populate title, start/end dates, and contest URLs directly into Google Calendar.
+
+### 🔗 Direct Browser Integration
+
+- **Clickable Contest Links:** Tap the contest URL inside any card details to jump straight into the contest page or problem set in your browser.
+
 ### 🎨 Premium Dark UI & UX
 
 - Glassmorphism design with frosted blur effects
-- Interactive **Coach Marks** (Tutorial Overlays) for seamless onboarding
+- Interactive **Coach Marks** (Tutorial Overlays) with smart tab-isolation preventing overlapping hints
+- **One-Tap Alarm Toggle:** Tap the `ACTIVE`/`DISMISSED` pill directly on any card to toggle alarms on the fly
+- **Tap-to-Skip Splash:** Fast startup with an immediately skippable DSA quote typewriter screen
 - Smooth micro-animations and transitions
 - Green accent color palette (`#1CD065`)
 - Google Sans typography throughout
-- **Timezone-Aware:** All contest times automatically convert to your local timezone seamlessly.
+- **True Global Timezone Engine:** All contests are calculated in UTC and converted seamlessly to your local device clock.
 
 ### ⚙️ Full Customization
 
@@ -154,6 +165,7 @@ Keep track of your contests without even opening the app!
 | Alarms           | [`alarm`](https://pub.dev/packages/alarm) package                                     |
 | Notifications    | [`flutter_local_notifications`](https://pub.dev/packages/flutter_local_notifications) |
 | Background Sync  | [`workmanager`](https://pub.dev/packages/workmanager)                                 |
+| Browser Links    | [`url_launcher`](https://pub.dev/packages/url_launcher)                               |
 | HTTP             | [`http`](https://pub.dev/packages/http)                                               |
 | Storage          | [`shared_preferences`](https://pub.dev/packages/shared_preferences)                   |
 | Permissions      | [`permission_handler`](https://pub.dev/packages/permission_handler)                   |
@@ -275,6 +287,8 @@ Contributions are welcome! Here are some ways you can help:
 - [x] Dynamic custom platforms via remote JSON
 - [x] Widgets for home screen
 - [x] AtCoder support
+- [x] Google Calendar export integration
+- [x] Clickable contest web links
 - [ ] Contest rating predictions
 - [ ] Contest problem difficulty analysis
 - [ ] iOS support

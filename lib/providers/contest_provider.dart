@@ -202,12 +202,8 @@ class ContestProvider extends ChangeNotifier {
       // 3. Persist
       await ApiService.saveModifications(updatedContest);
 
-      // 4. Reschedule
-      if (updatedContest.site == 'Manual') {
-        await AlarmService.scheduleCustomAlarm(updatedContest);
-      } else {
-        await AlarmService.scheduleContestAlarm(updatedContest);
-      }
+      // 4. Reschedule directly to ring at snooze time
+      await AlarmService.scheduleSnoozeAlarm(updatedContest, newTime);
 
       notifyListeners();
     }
@@ -221,12 +217,19 @@ class ContestProvider extends ChangeNotifier {
 
   Future<void> updateDisabledSitesAndAlarms(List<String> newSites) async {
     _disabledSites = newSites;
-    // cancel alarms for disabled sites and re-schedule for enabled
+    final now = DateTime.now();
+    final scheduleLimit = now.add(const Duration(days: 5));
+
+    // cancel alarms for disabled/out-of-range sites and re-schedule for enabled within 5 days
     for (var contest in _contests) {
       if (contest.site != 'Manual') {
-        if (newSites.contains(contest.site)) {
+        bool isDisabled = newSites.contains(contest.site);
+        bool isUpcoming =
+            contest.startTime.isAfter(now) && contest.startTime.isBefore(scheduleLimit);
+
+        if (isDisabled || !contest.isAlarmActive || !isUpcoming) {
           await AlarmService.stopAlarm(contest.alarmId);
-        } else if (contest.isAlarmActive) {
+        } else if (contest.isAlarmActive && isUpcoming) {
           await AlarmService.scheduleContestAlarm(contest);
         }
       }

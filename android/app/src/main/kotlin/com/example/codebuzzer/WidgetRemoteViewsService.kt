@@ -38,15 +38,26 @@ class WidgetRemoteViewsFactory(private val context: Context) : RemoteViewsServic
                 for (i in 0 until array.length()) {
                     val obj = array.getJSONObject(i)
                     try {
+                        val startMs = obj.optLong("start_time_ms", 0L)
                         val startStr = obj.optString("start_time", "")
-                        if (startStr.isNotEmpty()) {
-                            val date = format.parse(startStr)
-                            if (date != null) {
-                                val c = Calendar.getInstance().apply { time = date }
-                                if (c.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
-                                    c.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)) {
-                                    parsedList.add(obj)
-                                }
+                        val date = if (startMs > 0L) {
+                            java.util.Date(startMs)
+                        } else if (startStr.isNotEmpty()) {
+                            try {
+                                val cleanStr = if (startStr.contains(".")) startStr.substringBefore(".") else startStr.substringBefore("Z")
+                                format.parse(cleanStr)
+                            } catch (_: Exception) {
+                                null
+                            }
+                        } else {
+                            null
+                        }
+
+                        if (date != null) {
+                            val c = Calendar.getInstance().apply { time = date }
+                            if (c.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
+                                c.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)) {
+                                parsedList.add(obj)
                             }
                         }
                     } catch (e: Exception) {
@@ -111,19 +122,30 @@ class WidgetRemoteViewsFactory(private val context: Context) : RemoteViewsServic
             views.setImageViewResource(R.id.item_clock_icon, R.drawable.ic_clock_grey)
         }
 
-        if (startTimeStr.isNotEmpty()) {
+        val startMs = contest.optLong("start_time_ms", 0L)
+        val date: java.util.Date? = if (startMs > 0L) {
+            java.util.Date(startMs)
+        } else if (startTimeStr.isNotEmpty()) {
             try {
                 val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-                val date = format.parse(startTimeStr)
-                if (date != null) {
-                    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-                    val dateFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
-                    
-                    val timeStr = timeFormat.format(date)
-                    val dateStr = dateFormat.format(date)
-                    views.setTextViewText(R.id.item_time, timeStr)
-                    views.setTextViewText(R.id.item_date, dateStr)
-                }
+                val cleanStr = if (startTimeStr.contains(".")) startTimeStr.substringBefore(".") else startTimeStr.substringBefore("Z")
+                format.parse(cleanStr)
+            } catch (_: Exception) {
+                null
+            }
+        } else {
+            null
+        }
+
+        if (date != null) {
+            try {
+                val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                val dateFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
+                
+                val timeStr = timeFormat.format(date)
+                val dateStr = dateFormat.format(date)
+                views.setTextViewText(R.id.item_time, timeStr)
+                views.setTextViewText(R.id.item_date, dateStr)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

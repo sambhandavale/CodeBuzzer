@@ -2,7 +2,7 @@ name: codebuzzer
 description: "A Competitive Programming Contest Reminder"
 publish_to: "none"
 
-version: 1.0.3+4
+version: 1.0.4+5
 
 environment:
   sdk: ">=3.10.4 <4.0.0"
@@ -26,6 +26,7 @@ dependencies:
   flutter_dotenv: ^6.0.1
   tutorial_coach_mark: ^1.3.3
   home_widget: ^0.9.3
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:alarm/alarm.dart';
 import 'package:provider/provider.dart';
 import '../../providers/contest_provider.dart';
 import '../../models/contest.dart';
+import '../../services/alarm_service.dart';
+import '../../services/api_service.dart';
 
 class AlarmRingScreen extends StatefulWidget {
   final AlarmSettings alarmSettings;
@@ -32,8 +35,34 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
     super.dispose();
   }
 
+  static const MethodChannel _appChannel =
+      MethodChannel('com.example.codebuzzer/app');
+
+  Future<void> _handleDismissFinish(NavigatorState nav) async {
+    try {
+      final bool wasLocked =
+          await _appChannel.invokeMethod<bool>('dismissAlarmScreen') ?? false;
+      if (!wasLocked && mounted) {
+        if (nav.canPop()) {
+          nav.pop();
+        } else {
+          SystemNavigator.pop();
+        }
+      }
+    } catch (_) {
+      if (mounted) {
+        if (nav.canPop()) {
+          nav.pop();
+        } else {
+          SystemNavigator.pop();
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final nav = Navigator.of(context);
     final provider = context.read<ContestProvider>();
     Contest? contest;
     try {
@@ -150,9 +179,12 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
                     if (contest != null) {
                       await provider.dismissAlarm(contest);
                     } else {
-                      await Alarm.stop(widget.alarmSettings.id);
+                      await AlarmService.stopAlarm(widget.alarmSettings.id);
+                      await ApiService.saveDismissedAlarmId(
+                        widget.alarmSettings.id,
+                      );
                     }
-                    if (mounted) Navigator.pop(context);
+                    await _handleDismissFinish(nav);
                   },
                   onSnooze: () async {
                     if (contest != null) {
@@ -160,12 +192,12 @@ class _AlarmRingScreenState extends State<AlarmRingScreen>
                     } else {
                       final now = DateTime.now();
                       final snoozeTime = now.add(const Duration(minutes: 5));
+                      await AlarmService.stopAlarm(widget.alarmSettings.id);
                       final newSettings =
                           widget.alarmSettings.copyWith(dateTime: snoozeTime);
-                      await Alarm.stop(widget.alarmSettings.id);
                       await Alarm.set(alarmSettings: newSettings);
                     }
-                    if (mounted) Navigator.pop(context);
+                    await _handleDismissFinish(nav);
                   },
                 ),
               ),

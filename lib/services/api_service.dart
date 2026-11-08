@@ -120,6 +120,15 @@ class ApiService {
     await prefs.setString(modificationsKey, json.encode(mods));
   }
 
+  static Future<void> saveDismissedAlarmId(int alarmId) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> dismissed = prefs.getStringList('dismissed_alarm_ids') ?? [];
+    if (!dismissed.contains(alarmId.toString())) {
+      dismissed.add(alarmId.toString());
+      await prefs.setStringList('dismissed_alarm_ids', dismissed);
+    }
+  }
+
   static Future<List<Contest>> _applyModifications(
     List<Contest> contests,
   ) async {
@@ -127,15 +136,23 @@ class ApiService {
     Map<String, dynamic> mods = json.decode(
       prefs.getString(modificationsKey) ?? '{}',
     );
+    List<String> dismissedAlarmIds =
+        prefs.getStringList('dismissed_alarm_ids') ?? [];
 
     return contests.map((c) {
+      bool isDismissedByAlarmId =
+          dismissedAlarmIds.contains(c.alarmId.toString());
       if (mods.containsKey(c.id)) {
         final mod = mods[c.id];
         return c.copyWith(
-          isAlarmActive: mod['is_alarm_active'],
+          isAlarmActive: isDismissedByAlarmId
+              ? false
+              : (mod['is_alarm_active'] ?? true),
           snoozeCount: mod['snooze_count'],
           startTime: DateTime.tryParse(mod['start_time'] ?? ''),
         );
+      } else if (isDismissedByAlarmId) {
+        return c.copyWith(isAlarmActive: false);
       }
       return c;
     }).toList();
@@ -317,17 +334,20 @@ class ApiService {
 
   static List<Contest> _generateManualLeetCodeContests() {
     List<Contest> contests = [];
-    DateTime now = DateTime.now();
-    // Anchor for Biweekly: June 6, 2026 at 8:00 PM
-    DateTime biweeklyAnchor = DateTime(2026, 6, 6, 20, 0);
+    DateTime nowUtc = DateTime.now().toUtc();
+    DateTime todayUtc = DateTime.utc(nowUtc.year, nowUtc.month, nowUtc.day);
+    // Anchor for Biweekly: June 6, 2026 at 14:30 UTC (8:00 PM IST)
+    DateTime biweeklyAnchorUtc = DateTime.utc(2026, 6, 6, 14, 30);
 
     for (int i = 0; i < 365; i++) {
-      DateTime day = now.add(Duration(days: i));
+      DateTime day = todayUtc.add(Duration(days: i));
 
-      // Weekly Contest (Every Sunday 8:00 AM)
+      // Weekly Contest (Every Sunday 02:30 UTC = 8:00 AM IST)
       if (day.weekday == DateTime.sunday) {
-        DateTime contestStart = DateTime(day.year, day.month, day.day, 8, 0);
-        if (contestStart.isAfter(now)) {
+        DateTime contestStartUtc =
+            DateTime.utc(day.year, day.month, day.day, 2, 30);
+        DateTime contestStart = contestStartUtc.toLocal();
+        if (contestStart.isAfter(DateTime.now())) {
           contests.add(
             Contest(
               id: 'lc_weekly_${day.year}_${day.month}_${day.day}',
@@ -343,13 +363,16 @@ class ApiService {
         }
       }
 
-      // Biweekly Contest (Every other Saturday 8:00 PM)
+      // Biweekly Contest (Every other Saturday 14:30 UTC = 8:00 PM IST)
       if (day.weekday == DateTime.saturday) {
-        DateTime contestStart = DateTime(day.year, day.month, day.day, 20, 0);
-        int daysDifference = contestStart.difference(biweeklyAnchor).inDays;
+        DateTime contestStartUtc =
+            DateTime.utc(day.year, day.month, day.day, 14, 30);
+        int daysDifference =
+            contestStartUtc.difference(biweeklyAnchorUtc).inDays;
 
         if (daysDifference % 14 == 0) {
-          if (contestStart.isAfter(now)) {
+          DateTime contestStart = contestStartUtc.toLocal();
+          if (contestStart.isAfter(DateTime.now())) {
             contests.add(
               Contest(
                 id: 'lc_biweekly_${day.year}_${day.month}_${day.day}',
@@ -371,15 +394,18 @@ class ApiService {
 
   static List<Contest> _generateManualCodeChefContests() {
     List<Contest> contests = [];
-    DateTime now = DateTime.now();
+    DateTime nowUtc = DateTime.now().toUtc();
+    DateTime todayUtc = DateTime.utc(nowUtc.year, nowUtc.month, nowUtc.day);
 
     for (int i = 0; i < 365; i++) {
-      DateTime day = now.add(Duration(days: i));
+      DateTime day = todayUtc.add(Duration(days: i));
       if (day.weekday == DateTime.wednesday) {
-        // Wednesday at 8:00 PM IST (20:00 IST = 14:30 UTC)
-        DateTime contestStart = DateTime(day.year, day.month, day.day, 20, 0);
+        // Wednesday at 14:30 UTC = 8:00 PM IST
+        DateTime contestStartUtc =
+            DateTime.utc(day.year, day.month, day.day, 14, 30);
+        DateTime contestStart = contestStartUtc.toLocal();
 
-        if (contestStart.isAfter(now)) {
+        if (contestStart.isAfter(DateTime.now())) {
           contests.add(
             Contest(
               id: 'cc_${day.year}_${day.month}_${day.day}', // Deterministic ID
@@ -393,7 +419,6 @@ class ApiService {
             ),
           );
         }
-
       }
     }
     return contests;
@@ -401,15 +426,18 @@ class ApiService {
 
   static List<Contest> _generateManualCodingNinjasContests() {
     List<Contest> contests = [];
-    DateTime now = DateTime.now();
+    DateTime nowUtc = DateTime.now().toUtc();
+    DateTime todayUtc = DateTime.utc(nowUtc.year, nowUtc.month, nowUtc.day);
 
     for (int i = 0; i < 365; i++) {
-      DateTime day = now.add(Duration(days: i));
+      DateTime day = todayUtc.add(Duration(days: i));
       if (day.weekday == DateTime.thursday) {
-        // Thursday at 8:30 PM
-        DateTime contestStart = DateTime(day.year, day.month, day.day, 20, 30);
+        // Thursday at 15:00 UTC = 8:30 PM IST
+        DateTime contestStartUtc =
+            DateTime.utc(day.year, day.month, day.day, 15, 0);
+        DateTime contestStart = contestStartUtc.toLocal();
 
-        if (contestStart.isAfter(now)) {
+        if (contestStart.isAfter(DateTime.now())) {
           contests.add(
             Contest(
               id: 'cn_${day.year}_${day.month}_${day.day}', // Deterministic ID
@@ -426,7 +454,6 @@ class ApiService {
             ),
           );
         }
-
       }
     }
     return contests;

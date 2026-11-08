@@ -31,15 +31,26 @@ class ContestWidgetProvider : HomeWidgetProvider() {
                     
                     for (i in 0 until array.length()) {
                         val obj = array.getJSONObject(i)
+                        val startMs = obj.optLong("start_time_ms", 0L)
                         val startStr = obj.optString("start_time", "")
-                        if (startStr.isNotEmpty()) {
-                            val date = format.parse(startStr)
-                            if (date != null) {
-                                val c = Calendar.getInstance().apply { time = date }
-                                if (c.get(Calendar.YEAR) == tomorrow.get(Calendar.YEAR) &&
-                                    c.get(Calendar.DAY_OF_YEAR) == tomorrow.get(Calendar.DAY_OF_YEAR)) {
-                                    tomorrowCount++
-                                }
+                        val date = if (startMs > 0L) {
+                            java.util.Date(startMs)
+                        } else if (startStr.isNotEmpty()) {
+                            try {
+                                val cleanStr = if (startStr.contains(".")) startStr.substringBefore(".") else startStr.substringBefore("Z")
+                                format.parse(cleanStr)
+                            } catch (_: Exception) {
+                                null
+                            }
+                        } else {
+                            null
+                        }
+
+                        if (date != null) {
+                            val c = Calendar.getInstance().apply { time = date }
+                            if (c.get(Calendar.YEAR) == tomorrow.get(Calendar.YEAR) &&
+                                c.get(Calendar.DAY_OF_YEAR) == tomorrow.get(Calendar.DAY_OF_YEAR)) {
+                                tomorrowCount++
                             }
                         }
                     }

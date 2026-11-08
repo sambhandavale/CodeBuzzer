@@ -4,6 +4,19 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TutorialService {
+  static TutorialCoachMark? _activeTutorial;
+
+  static void hideActiveTutorial() {
+    try {
+      if (_activeTutorial != null && _activeTutorial!.isShowing) {
+        _activeTutorial!.finish();
+      }
+      _activeTutorial = null;
+    } catch (_) {
+      _activeTutorial = null;
+    }
+  }
+
   static Future<bool> hasSeenHomeTutorial() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool('has_seen_home_tutorial_v5') ?? false;
@@ -126,20 +139,26 @@ class TutorialService {
       ),
     ];
 
-    TutorialCoachMark(
+    hideActiveTutorial();
+
+    final tutorial = TutorialCoachMark(
       targets: targets,
       colorShadow: const Color(0xFF111214),
       textSkip: "SKIP",
       paddingFocus: 10,
       opacityShadow: 0.8,
       onFinish: () {
+        _activeTutorial = null;
         markPopupTutorialSeen();
       },
       onSkip: () {
+        _activeTutorial = null;
         markPopupTutorialSeen();
         return true;
       },
-    ).show(context: context);
+    );
+    _activeTutorial = tutorial;
+    tutorial.show(context: context);
   }
 
   static void showHomeTutorial({
@@ -245,13 +264,16 @@ class TutorialService {
       ),
     ];
 
-    TutorialCoachMark(
+    hideActiveTutorial();
+
+    final tutorial = TutorialCoachMark(
       targets: targets,
       colorShadow: const Color(0xFF111214),
       textSkip: "SKIP",
       paddingFocus: 10,
       opacityShadow: 0.8,
       onFinish: () {
+        _activeTutorial = null;
         markHomeTutorialSeen();
         if (onFinish != null) onFinish();
       },
@@ -259,11 +281,14 @@ class TutorialService {
         // do nothing
       },
       onSkip: () {
+        _activeTutorial = null;
         markHomeTutorialSeen();
         if (onFinish != null) onFinish();
         return true;
       },
-    ).show(context: context);
+    );
+    _activeTutorial = tutorial;
+    tutorial.show(context: context);
   }
 
   static void showSettingsTutorial({
@@ -330,19 +355,25 @@ class TutorialService {
       ),
     ];
 
-    TutorialCoachMark(
+    hideActiveTutorial();
+
+    final tutorial = TutorialCoachMark(
       targets: targets,
       colorShadow: const Color(0xFF111214),
       textSkip: "SKIP",
       paddingFocus: 10,
       opacityShadow: 0.8,
       onFinish: () {
+        _activeTutorial = null;
         markSettingsTutorialSeen();
       },
       onSkip: () {
+        _activeTutorial = null;
         markSettingsTutorialSeen();
         return true;
       },
-    ).show(context: context);
+    );
+    _activeTutorial = tutorial;
+    tutorial.show(context: context);
   }
 }

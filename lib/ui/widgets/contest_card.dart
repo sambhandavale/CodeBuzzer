@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui';
+import 'package:url_launcher/url_launcher.dart';
 import '../../models/contest.dart';
 import '../../providers/contest_provider.dart';
 
@@ -220,42 +221,64 @@ class ContestCard extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 8),
                                   ],
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 14,
-                                      vertical: 7,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isActive
-                                          ? const Color(
-                                              0xFF1CD065,
-                                            ).withValues(alpha: 0.1)
-                                          : Colors.white.withValues(alpha: 0.05),
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          isActive
-                                              ? Icons.notifications_active
-                                              : Icons.notifications_off,
-                                          size: 12,
-                                          color: isActive
-                                              ? const Color(0xFF1CD065)
-                                              : Colors.white38,
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          isActive ? 'ACTIVE' : 'DISMISSED',
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w900,
+                                  GestureDetector(
+                                    onTap: () async {
+                                      if (isPlatformDisabled) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Enable ${contest.site} in Settings to set alarms.',
+                                            ),
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      try {
+                                        await provider.toggleAlarm(contest);
+                                      } catch (e) {
+                                        if (e.toString().contains('AlarmPermissionException') &&
+                                            context.mounted) {
+                                          openAppSettings();
+                                        }
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 7,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: isActive
+                                            ? const Color(
+                                                0xFF1CD065,
+                                              ).withValues(alpha: 0.1)
+                                            : Colors.white.withValues(alpha: 0.05),
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            isActive
+                                                ? Icons.notifications_active
+                                                : Icons.notifications_off,
+                                            size: 12,
                                             color: isActive
                                                 ? const Color(0xFF1CD065)
                                                 : Colors.white38,
                                           ),
-                                        ),
-                                      ],
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            isActive ? 'ACTIVE' : 'DISMISSED',
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w900,
+                                              color: isActive
+                                                  ? const Color(0xFF1CD065)
+                                                  : Colors.white38,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -361,7 +384,15 @@ class ContestCard extends StatelessWidget {
                 '${int.tryParse(contest.duration) != null ? (int.parse(contest.duration) ~/ 60) : 'Unknown'} minutes',
               ),
               const SizedBox(height: 16),
-              _buildInfoRow(Icons.link, 'URL', contest.url),
+              _buildInfoRow(
+                Icons.link,
+                'URL (Tap to open)',
+                contest.url.isEmpty ? 'Not available' : contest.url,
+                onTap: (contest.url.isNotEmpty && contest.url != 'Manual')
+                    ? () => _launchContestUrl(context, contest.url)
+                    : null,
+                isLink: contest.url.isNotEmpty && contest.url != 'Manual',
+              ),
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
@@ -428,6 +459,36 @@ class ContestCard extends StatelessWidget {
                       letterSpacing: 1.2,
                     ),
                   ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    side: BorderSide(
+                      color: const Color(0xFF1CD065).withValues(alpha: 0.4),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  icon: const Icon(
+                    Icons.calendar_month,
+                    size: 18,
+                    color: Color(0xFF1CD065),
+                  ),
+                  label: const Text(
+                    'ADD TO GOOGLE CALENDAR',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF1CD065),
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                  onPressed: () => _addToGoogleCalendar(context, contest),
                 ),
               ),
               if (contest.site == 'Manual') ...[
@@ -502,11 +563,56 @@ class ContestCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String title, String value) {
-    return Row(
+  Future<void> _addToGoogleCalendar(BuildContext context, Contest contest) async {
+    final startStr =
+        DateFormat("yyyyMMdd'T'HHmmss'Z'").format(contest.startTime.toUtc());
+    final endStr =
+        DateFormat("yyyyMMdd'T'HHmmss'Z'").format(contest.endTime.toUtc());
+    final title = Uri.encodeComponent(contest.name);
+    final details = Uri.encodeComponent(
+      '${contest.site} Contest: ${contest.name}\n${contest.url.isNotEmpty && contest.url != "Manual" ? contest.url : ""}',
+    );
+
+    final url =
+        'https://calendar.google.com/calendar/render?action=TEMPLATE&text=$title&dates=$startStr/$endStr&details=$details';
+    await _launchContestUrl(context, url);
+  }
+
+  Future<void> _launchContestUrl(BuildContext context, String rawUrl) async {
+    if (rawUrl.isEmpty || rawUrl == 'Manual') return;
+    final uri = Uri.tryParse(rawUrl);
+    if (uri != null) {
+      try {
+        final success = await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
+        if (!success && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Could not open link in browser')),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error launching URL: $e')),
+          );
+        }
+      }
+    }
+  }
+
+  Widget _buildInfoRow(
+    IconData icon,
+    String title,
+    String value, {
+    VoidCallback? onTap,
+    bool isLink = false,
+  }) {
+    final content = Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: Colors.white38),
+        Icon(icon, size: 20, color: isLink ? const Color(0xFF1CD065) : Colors.white38),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -521,19 +627,47 @@ class ContestCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isLink ? const Color(0xFF1CD065) : Colors.white,
+                        fontWeight: FontWeight.w500,
+                        decoration: isLink ? TextDecoration.underline : null,
+                        decorationColor: const Color(0xFF1CD065),
+                      ),
+                    ),
+                  ),
+                  if (isLink) ...[
+                    const SizedBox(width: 6),
+                    const Icon(
+                      Icons.open_in_new,
+                      size: 14,
+                      color: Color(0xFF1CD065),
+                    ),
+                  ],
+                ],
               ),
             ],
           ),
         ),
       ],
     );
+
+    if (onTap != null) {
+      return InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: content,
+        ),
+      );
+    }
+    return content;
   }
 
   Color _getPlatformColor(String site) {

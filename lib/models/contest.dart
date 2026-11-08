@@ -25,7 +25,7 @@ class Contest {
     required this.status,
     this.isAlarmActive = true,
     this.snoozeCount = 0,
-  }) : alarmId = alarmId ?? id.hashCode.abs() % 100000;
+  }) : alarmId = alarmId ?? ((id.hashCode.abs() % 100000) * 10);
 
   Contest copyWith({
     String? id,
@@ -59,7 +59,7 @@ class Contest {
 
   factory Contest.fromJson(Map<String, dynamic> json) {
     final id = json['id'] ?? '';
-    final generatedAlarmId = id.hashCode.abs() % 100000;
+    final generatedAlarmId = (id.hashCode.abs() % 100000) * 10;
 
     final startTimeDate = json['start_time'] is int
         ? DateTime.fromMillisecondsSinceEpoch(json['start_time']).toLocal()
@@ -93,6 +93,7 @@ class Contest {
       'description': description,
       'url': url,
       'start_time': startTime.toIso8601String(),
+      'start_time_ms': startTime.millisecondsSinceEpoch,
       'end_time': endTime.toIso8601String(),
       'duration': duration,
       'site': site,

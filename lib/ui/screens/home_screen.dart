@@ -17,7 +17,8 @@ import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final bool isVisible;
+  const HomeScreen({super.key, this.isVisible = true});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -39,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     // Fetch data only if needed (Provider handles check)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ContestProvider>().fetchContests();
-      final provider = context.read<ContestProvider>();
     });
   }
 
@@ -56,23 +56,34 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
+  @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isVisible && !oldWidget.isVisible) {
+      _checkPermissions();
+    }
+  }
+
   Future<void> _checkPermissions() async {
     final granted = await AlarmService.checkAllPermissions();
     if (mounted) {
       setState(() {
         _permissionsGranted = granted;
       });
-      _checkAndShowTutorial();
+      if (widget.isVisible) {
+        _checkAndShowTutorial();
+      }
     }
   }
 
   Future<void> _checkAndShowTutorial() async {
+    if (!widget.isVisible) return;
     if (_tutorialShown) return;
-    _tutorialShown = true;
     final hasSeen = await TutorialService.hasSeenHomeTutorial();
-    if (!hasSeen && mounted && _permissionsGranted) {
+    if (!hasSeen && mounted && _permissionsGranted && widget.isVisible) {
+      _tutorialShown = true;
       Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) {
+        if (mounted && widget.isVisible) {
           TutorialService.showHomeTutorial(
             context: context,
             headerKey: _headerKey,
@@ -82,13 +93,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             settingsNavKey: settingsNavKey,
             onFinish: () {
               if (mounted) {
-                _checkAndShowWidgetPromo();
+                Future.delayed(const Duration(milliseconds: 600), () {
+                  if (mounted && widget.isVisible) {
+                    _checkAndShowWidgetPromo();
+                  }
+                });
               }
             },
           );
         }
       });
-    } else if (mounted) {
+    } else if (mounted && widget.isVisible) {
       _checkAndShowWidgetPromo();
     }
   }

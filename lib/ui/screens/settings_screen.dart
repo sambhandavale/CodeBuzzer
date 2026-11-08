@@ -11,7 +11,8 @@ import 'package:home_widget/home_widget.dart';
 import '../../services/tutorial_service.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final bool isVisible;
+  const SettingsScreen({super.key, this.isVisible = false});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -31,16 +32,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _loadPrefs();
-    _checkAndShowTutorial();
+    if (widget.isVisible) {
+      _checkAndShowTutorial();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant SettingsScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isVisible && !oldWidget.isVisible) {
+      _checkAndShowTutorial();
+    }
   }
 
   Future<void> _checkAndShowTutorial() async {
+    if (!widget.isVisible) return;
     if (_tutorialShown) return;
-    _tutorialShown = true;
     final hasSeen = await TutorialService.hasSeenSettingsTutorial();
-    if (!hasSeen && mounted) {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) {
+    if (!hasSeen && mounted && widget.isVisible) {
+      _tutorialShown = true;
+      Future.delayed(const Duration(milliseconds: 400), () {
+        if (mounted && widget.isVisible) {
           TutorialService.showSettingsTutorial(
             context: context,
             platformsKey: _platformsKey,
@@ -378,7 +390,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Text(
-                      'Customize the sound that wakes you up. Currently using: ${_customAlarmName ?? "Default (alarm.wav)"}',
+                      'Customize the sound that wakes you up. Currently using: ${_customAlarmName ?? "Default (alarm_music.mp3)"}',
                       style: TextStyle(fontSize: 14, color: Colors.white54),
                     ),
                   ),

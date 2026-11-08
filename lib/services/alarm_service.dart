@@ -132,6 +132,22 @@ class AlarmService {
     );
   }
 
+  static Future<void> scheduleSnoozeAlarm(
+    Contest contest,
+    DateTime snoozeTime,
+  ) async {
+    final exact = await Permission.scheduleExactAlarm.status;
+    if (!exact.isGranted) {
+      throw AlarmPermissionException('Exact alarm permission is required to schedule alarms.');
+    }
+    await _setAlarm(
+      contest.alarmId,
+      snoozeTime,
+      contest.name,
+      body: 'Snoozed: ${contest.name}',
+    );
+  }
+
   static Future<void> _setAlarm(
     int id,
     DateTime dateTime,

@@ -1,11 +1,11 @@
 import 'package:codebuzzer/providers/contest_provider.dart';
-import 'package:codebuzzer/services/alarm_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'home_screen.dart';
 import 'settings_screen.dart';
 import '../widgets/add_alarm_popup.dart';
 import '../widgets/glass_container.dart';
+import '../../services/tutorial_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -19,22 +19,6 @@ final GlobalKey addNavKey = GlobalKey();
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
-  bool _permissionsGranted = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkPermissions();
-  }
-
-  Future<void> _checkPermissions() async {
-    final granted = await AlarmService.checkAllPermissions();
-    setState(() {
-      _permissionsGranted = granted;
-    });
-  }
-
-  final List<Widget> _pages = [const HomeScreen(), const SettingsScreen()];
 
   void _showAddAlarmPopup(BuildContext context) {
     showModalBottomSheet(
@@ -60,7 +44,13 @@ class _MainScreenState extends State<MainScreen> {
       extendBody: true, // Allows body to extend behind the floating navbar
       body: Stack(
         children: [
-          _pages[_currentIndex],
+          IndexedStack(
+            index: _currentIndex,
+            children: [
+              HomeScreen(isVisible: _currentIndex == 0),
+              SettingsScreen(isVisible: _currentIndex == 1),
+            ],
+          ),
 
           // Custom Floating Navbar
           Positioned(
@@ -80,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
                     const SizedBox(width: 8),
                     _buildNavIcon(1, Icons.add, isAction: true),
                     const SizedBox(width: 8),
-                    _buildNavIcon(2, Icons.person_outline, isAction: false),
+                    _buildNavIcon(2, Icons.settings_outlined, isAction: false),
                   ],
                 ),
               ),
@@ -105,6 +95,7 @@ class _MainScreenState extends State<MainScreen> {
         if (isAction) {
           _showAddAlarmPopup(context);
         } else {
+          TutorialService.hideActiveTutorial();
           setState(() {
             _currentIndex = pageIndex;
           });
